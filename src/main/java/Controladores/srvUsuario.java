@@ -3,6 +3,7 @@ package Controladores;
 
 import Modelo.DAOUSUARIO;
 import Modelo.usuario;
+import Modelo.cargo;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -55,11 +56,11 @@ public class srvUsuario extends HttpServlet {
             sesion = request.getSession();
             sesion.setAttribute("usuario", usuario);
             request.setAttribute("msje", "Bienvenido al sistema");
-            this.getServletConfig().getServletContext().getRequestDispatcher("/vistas/index.jsp").forward(request, response);
+            this.getServletConfig().getServletContext().getRequestDispatcher("/vistas/admin/dashboard.jsp").forward(request, response);
         }else if(usuario != null && usuario.getCargo().getNombreCargo().equals("VENDEDOR")){
            sesion = request.getSession();
-            sesion.setAttribute("vendedor", usuario);
-            this.getServletConfig().getServletContext().getRequestDispatcher("/vistas/formVendedor.jsp").forward(request, response); 
+            sesion.setAttribute("usuario", usuario);
+            this.getServletConfig().getServletContext().getRequestDispatcher("/vistas/vendedor/dashboard.jsp").forward(request, response); 
         }else{
             request.setAttribute("msje", "Credenciales Incorrectas");
             request.getRequestDispatcher("identificar.jsp").forward(request, response);

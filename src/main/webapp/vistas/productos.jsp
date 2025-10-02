@@ -120,10 +120,26 @@
                         </li>
 
                         <!-- Productos -->
-                        <li>
-                            <a href="${pageContext.request.contextPath}/ControladorEmpleado?menu=listar">
-                                <i class="glyphicon glyphicon-th-large"></i> <span>Empleados</span>
+                        <li class="treeview">
+                            <a href="#"><i class="glyphicon glyphicon-th-large"></i> <span>Registros</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
                             </a>
+                            <ul class="treeview-menu">
+                                <li>
+                                    <a href="${pageContext.request.contextPath}/ControladorEmpleado?menu=listarEmpleados">
+                                        <i class="glyphicon glyphicon-th-large"></i> <span>Empleados</span>
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="${pageContext.request.contextPath}/ControladorUsuario?menu=listarUsuarios">
+                                        <i class="glyphicon glyphicon-th-large"></i> <span>Usuarios</span>
+                                    </a>
+                                </li>
+
+                            </ul>
                         </li>
 
                         <!-- Ventas -->

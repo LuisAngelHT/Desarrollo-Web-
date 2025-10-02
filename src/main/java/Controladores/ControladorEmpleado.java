@@ -1,4 +1,3 @@
-
 package Controladores;
 
 import Modelo.Empleado;
@@ -13,35 +12,36 @@ import javax.servlet.http.HttpServletResponse;
 
 @WebServlet(name = "ControladorEmpleado", urlPatterns = {"/ControladorEmpleado"})
 public class ControladorEmpleado extends HttpServlet {
+
     private EmpleadoDAO empDao = new EmpleadoDAO();
     private final String pagListar = "/vistas/listarEmpleados.jsp";
     private final String pagAgregar = "/vistas/agregar.jsp";
     private final String pagProductos = "/vistas/productos.jsp";
     private final String pagPrincipal = "/vistas/index.jsp";
-    
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-                String menu= request.getParameter("menu");
-                
+        String menu = request.getParameter("menu");
 
-    switch (menu) {
-        case "index":
-            request.getRequestDispatcher(pagPrincipal).forward(request, response);
-            break;
-        case "listarEmpleados":
+        switch (menu) {
+            case "index":
+                request.getRequestDispatcher(pagPrincipal).forward(request, response);
+                break;
+            case "listarEmpleados":
                 listarEmpleados(request, response);
                 break;
-        case "agregar":
+            case "agregar":
                 agregar(request, response);
                 break;
-        case "productos":
+            case "productos":
                 productos(request, response);
                 break;
-        default:
-            request.getRequestDispatcher(pagPrincipal).forward(request, response);
-            break;
+            default:
+                request.getRequestDispatcher(pagPrincipal).forward(request, response);
+                break;
+        }
     }
-    }
+
     private void agregar(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -56,13 +56,14 @@ public class ControladorEmpleado extends HttpServlet {
         request.setAttribute("empleados", empDao.listarTodos());
         request.getRequestDispatcher(pagListar).forward(request, response);
     }
+
     protected void productos(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
 
         request.getRequestDispatcher(pagProductos).forward(request, response);
     }
-    
+
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -101,7 +102,5 @@ public class ControladorEmpleado extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
-   
 
 }
