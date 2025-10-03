@@ -1,0 +1,46 @@
+.dashboard-box {
+    border-radius: 10px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.dashboard-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.bg-gradient-aqua {
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    color: #fff;
+}
+.bg-gradient-green {
+    background: linear-gradient(135deg, #00b09b, #96c93d);
+    color: #fff;
+}
+.bg-gradient-yellow {
+    background: linear-gradient(135deg, #f7971e, #ffd200);
+    color: #fff;
+}
+.bg-gradient-red {
+    background: linear-gradient(135deg, #ff4e50, #f9d423);
+    color: #fff;
+}
+.table-hover tbody tr:hover {
+    background-color: #f0f8ff;
+    transition: background-color 0.3s ease;
+}
+.badge {
+    font-size: 0.85em;
+    padding: 5px 10px;
+    border-radius: 8px;
+}
+.btn-xs {
+    padding: 4px 6px;
+    font-size: 0.75em;
+    margin-right: 4px;
+}
+.img-thumbnail {
+    border-radius: 6px;
+    transition: transform 0.3s ease;
+}
+.img-thumbnail:hover {
+    transform: scale(1.1);
+}

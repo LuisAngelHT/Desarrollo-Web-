@@ -1,174 +1,178 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%
-    if (session.getAttribute("vendedor") != null) {
-%>
-<html>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ include file="/vistas/includes/head-resources.jsp" %>
+
+<!DOCTYPE html>
+<html lang="es">
     <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Sistema Bodega| Inicio</title>
-        <!-- Tell the browser to be responsive to screen width -->
-        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-        <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
-        <!-- Font Awesome -->
-        <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
-        <!-- Ionicons -->
-        <link rel="stylesheet" href="bower_components/Ionicons/css/ionicons.min.css">
-        <!-- Theme style -->
-        <link href="dist/css/AdminLTE.min.css" rel="stylesheet" type="text/css"/>
-
-        <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
-              page. However, you can choose any other skin. Make sure you
-              apply the skin class to the body tag so the changes take effect. -->
-        <link rel="stylesheet" href="dist/css/skins/skin-blue.min.css">
-        <link rel="stylesheet"
-              href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+        <title>Panel del Vendedor</title>
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/custom/css/custom.css">
     </head>
+    <body>
+        <%@ include file="/vistas/includes/header-vendedor.jsp" %>
+        <%@ include file="/vistas/includes/sidebar-vendedor.jsp" %>
 
-    <body class="hold-transition skin-blue sidebar-mini">
-        <div class="wrapper">
+        <div class="content-wrapper">
+            <section class="content-header">
+                <h1>Panel del Vendedor</h1>
+                <small>Resumen de tu actividad</small>
+            </section>
 
-            <!-- Main Header -->
-            <header class="main-header">
-                <a href="#" class="logo">
-                    <!-- mini logo for sidebar mini 50x50 pixels -->
-                    <span class="logo-mini"><b>S</b>BL</span>
-                    <!-- logo for regular state and mobile devices -->
-                    <span class="logo-lg"><b>Urban Store</b></span>
-                </a>
-
-                <!-- Header Navbar -->
-                <nav class="navbar navbar-static-top" role="navigation">
-                    <!-- Sidebar toggle button-->
-                    <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
-                        <span class="sr-only">Toggle navigation</span>
-                    </a>
-                    <!-- Navbar Right Menu -->
-                    <div class="navbar-custom-menu">
-                        <ul class="nav navbar-nav">
-                            <!-- User Account Menu -->
-                            <li class="dropdown user user-menu">
-                                <!-- Menu Toggle Button -->
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                    <!-- The user image in the navbar-->
-                                    <img src="dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
-                                    <!-- hidden-xs hides the username on small devices so only the image appears. -->
-                                    <span class="hidden-xs">${vendedor.nombreUsuario}</span>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <!-- The user image in the menu -->
-                                    <li class="user-header">
-                                        <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
-
-                                        <p>                    
-                                            Bienvenido - ${vendedor.nombreUsuario}
-                                            <small>Usted es, ${vendedor.cargo.nombreCargo} </small>
-                                        </p>
-                                    </li>
-                                    <!-- Menu Footer-->
-                                    <li class="user-footer">
-                                        <div class="pull-right">
-                                            <a href="srvUsuario?accion=cerrar" class="btn btn-default btn-flat">Cerrar Session</a>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </div>
-                </nav>
-            </header>
-            <!-- Left side column. contains the logo and sidebar -->
-            <aside class="main-sidebar">
-
-                <!-- sidebar: style can be found in sidebar.less -->
-                <section class="sidebar">
-
-                    <!-- Sidebar user panel (optional) -->
-                    <div class="user-panel">
-                        <div class="pull-left image">
-                            <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
-                        </div>
-                        <div class="pull-left info">
-                            <p>Bienvenido, ${vendedor.nombreUsuario}</p>
-                            <!-- Status -->
-                            <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
-                        </div>
-                    </div>
-
-                    <!-- search form (Optional) -->
-                    <form action="#" method="get" class="sidebar-form">
-                        <div class="input-group">
-                            <input type="text" name="q" class="form-control" placeholder="Search...">
-                            <span class="input-group-btn">
-                                <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
-                                </button>
-                            </span>
-                        </div>
-                    </form>
-                    <!-- /.search form -->
-
-                    <!-- Sidebar Menu -->
-                    <ul class="sidebar-menu" data-widget="tree">
-                        <li class="header">INICIO</li>
-                        <li class="treeview">
-                            <a href="#"><i class="fa fa-cart-arrow-down"></i> <span>Historial de compras</span>
+            <section class="content">
+                <div class="row">
+                    <!-- Productos -->
+                    <div class="col-lg-3 col-xs-6">
+                        <div class="small-box bg-gradient-aqua dashboard-box">
+                            <div class="inner">
+                                <h3>${totalProductos != null ? totalProductos : 0}</h3>
+                                <p>Productos disponibles</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fa fa-cube"></i>
+                            </div>
+                            <a href="srvProductos?accion=listar" class="small-box-footer">
+                                Ver productos <i class="fa fa-arrow-circle-right"></i>
                             </a>
-                        </li>
-                    </ul>
-                    <!-- /.sidebar-menu -->
-                </section>
-                <!-- /.sidebar -->
-            </aside>
+                        </div>
+                    </div>
 
-            <!-- Content Wrapper. Contains page content -->
-            <div class="content-wrapper">
-                <!-- Content Header (Page header) -->
-                <section class="content-header">
-                    <h1>
-                        Historial de Compras
-                        
-                    </h1>
-                    
-                </section>
+                    <!-- Ventas -->
+                    <div class="col-lg-3 col-xs-6">
+                        <div class="small-box bg-gradient-green dashboard-box">
+                            <div class="inner">
+                                <h3>${ventasHoy != null ? ventasHoy : 0}</h3>
+                                <p>Ventas hoy</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fa fa-shopping-cart"></i>
+                            </div>
+                            <a href="srvVentas?accion=listar" class="small-box-footer">
+                                Ver ventas <i class="fa fa-arrow-circle-right"></i>
+                            </a>
+                        </div>
+                    </div>
 
-                <section class="content">
-                    
-                </section>
-                <!-- /.content -->
-            </div>
-            <!-- /.content-wrapper -->
+                    <!-- Clientes -->
+                    <div class="col-lg-3 col-xs-6">
+                        <div class="small-box bg-gradient-yellow dashboard-box">
+                            <div class="inner">
+                                <h3>${totalClientes != null ? totalClientes : 0}</h3>
+                                <p>Clientes registrados</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fa fa-users"></i>
+                            </div>
+                            <a href="srvClientes?accion=listar" class="small-box-footer">
+                                Ver clientes <i class="fa fa-arrow-circle-right"></i>
+                            </a>
+                        </div>
+                    </div>
 
-            <!-- Main Footer -->
-            <footer class="main-footer">
-                <!-- To the right -->
-                <div class="pull-right hidden-xs">
-                    Anything you want
+                    <!-- Inventario bajo -->
+                    <div class="col-lg-3 col-xs-6">
+                        <div class="small-box bg-gradient-red dashboard-box">
+                            <div class="inner">
+                                <h3>${inventarioBajo != null ? inventarioBajo : 0}</h3>
+                                <p>Stock bajo</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fa fa-exclamation-triangle"></i>
+                            </div>
+                            <a href="srvInventario?accion=listar" class="small-box-footer">
+                                Revisar inventario <i class="fa fa-arrow-circle-right"></i>
+                            </a>
+                        </div>
+                    </div>
                 </div>
-                <!-- Default to the left -->
-                <strong>Copyright &copy; 2020 <a href="#">IDAT</a>.</strong> Todos los derechos reservados.
-            </footer>
 
-            <div class="control-sidebar-bg"></div>
+                <!-- Últimas ventas -->
+                <div class="row mt-4">
+                    <div class="col-lg-8">
+                        <div class="box box-primary">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Últimas 5 ventas</h3>
+                            </div>
+                            <div class="box-body">
+                                <c:choose>
+                                    <c:when test="${not empty ventasRecientes}">
+                                        <table class="table table-hover table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Fecha</th>
+                                                    <th>Cliente</th>
+                                                    <th>Producto</th>
+                                                    <th>Estado</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <c:forEach var="venta" items="${ventasRecientes}" varStatus="status">
+                                                    <c:if test="${status.index < 5}">
+                                                        <tr>
+                                                            <td><fmt:formatDate value="${venta.fecha}" pattern="dd/MM/yyyy HH:mm" /></td>
+                                                            <td>${venta.nombreCliente}</td>
+                                                            <td>${venta.nombreProducto}</td>
+                                                            <td>
+                                                                <c:choose>
+                                                                    <c:when test="${venta.estado == 'Confirmada'}">
+                                                                        <span class="label label-success">Confirmada</span>
+                                                                    </c:when>
+                                                                    <c:when test="${venta.estado == 'Pendiente'}">
+                                                                        <span class="label label-warning">Pendiente</span>
+                                                                    </c:when>
+                                                                    <c:otherwise>
+                                                                        <span class="label label-default">${venta.estado}</span>
+                                                                    </c:otherwise>
+                                                                </c:choose>
+                                                            </td>
+                                                        </tr>
+                                                    </c:if>
+                                                </c:forEach>
+                                            </tbody>
+                                        </table>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <div class="alert alert-info">No hay ventas registradas.</div>
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Clientes nuevos -->
+                    <div class="col-lg-4">
+                        <div class="box box-warning">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Clientes nuevos esta semana</h3>
+                                <span class="badge bg-yellow pull-right">${clientesSemana != null ? clientesSemana : 0}</span>
+                            </div>
+                            <div class="box-body">
+                                <c:choose>
+                                    <c:when test="${not empty clientesRecientes}">
+                                        <ul class="list-group">
+                                            <c:forEach var="c" items="${clientesRecientes}">
+                                                <li class="list-group-item">
+                                                    <strong>${c.nombre} ${c.apellido}</strong>
+                                                    <span class="label label-info pull-right">${c.estado}</span><br>
+                                                    <small>DNI: ${c.dni} | Registro: <fmt:formatDate value="${c.fechaRegistro}" pattern="dd/MM/yyyy" /></small>
+                                                </li>
+                                            </c:forEach>
+                                        </ul>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <div class="alert alert-info">No hay nuevos clientes esta semana.</div>
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
+                            <div class="box-footer text-center">
+                                <a href="srvClientes?accion=listar" class="btn btn-sm btn-default">Ver todos los clientes</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
-        <!-- ./wrapper -->
 
-        <!-- REQUIRED JS SCRIPTS -->
-
-        <!-- jQuery 3 -->
-        <script src="bower_components/jquery/dist/jquery.min.js"></script>
-        <!-- Bootstrap 3.3.7 -->
-        <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-        <!-- AdminLTE App -->
-        <script src="dist/js/adminlte.min.js"></script>
-
-        <!-- Optionally, you can add Slimscroll and FastClick plugins.
-             Both of these plugins are recommended to enhance the
-             user experience. -->
+        <%@ include file="/vistas/includes/footer.jsp" %>
     </body>
 </html>
-<%        
-    } else {
-        response.sendRedirect("identificar.jsp");
-    }
-%>
