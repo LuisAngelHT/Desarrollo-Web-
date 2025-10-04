@@ -1,8 +1,10 @@
 package Modelo;
 
 public class Categoria {
+
     private int idCategoria;
     private String nombreCategoria;
+    private String descripcion;
 
     public int getIdCategoria() {
         return idCategoria;
@@ -19,5 +21,13 @@ public class Categoria {
     public void setNombreCategoria(String nombreCategoria) {
         this.nombreCategoria = nombreCategoria;
     }
-}
 
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+}

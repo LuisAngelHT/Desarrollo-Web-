@@ -12,5 +12,8 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/AdminLTE.min.css">
 <!-- AdminLTE Skins -->
 <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/skins/skin-blue.min.css">
+
+<link rel="stylesheet" href="${pageContext.request.contextPath}/custom/css/custom.css">
+
 <!-- Google Font -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">

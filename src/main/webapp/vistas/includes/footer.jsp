@@ -20,3 +20,15 @@
         $('.sidebar-menu').tree();
     });
 </script>
+
+<script>
+    $(document).ready(function() {
+        // Oculta cualquier alerta después de 5 segundos (5000 ms)
+        setTimeout(function() {
+            $(".alert").fadeOut("slow");
+        }, 1800);
+    });
+</script>
+
+
+

@@ -21,7 +21,7 @@ public class srvDashboardAdmin extends HttpServlet {
         }
 
         request.setAttribute("nombre", usuario.getNombre());
-        request.getRequestDispatcher("/vistas/admin/dashboard.jsp").forward(request, response);
+        request.getRequestDispatcher("/vistas/administrador/dashboard.jsp").forward(request, response);
     }
 
     @Override protected void doGet(HttpServletRequest request, HttpServletResponse response)

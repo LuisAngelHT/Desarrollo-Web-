@@ -25,6 +25,9 @@
                         <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#modalAgregar">
                             <i class="fa fa-plus"></i> Agregar producto
                         </button>
+                        <a href="srvCategoria?accion=listar" class="btn btn-info btn-sm ml-2">
+                            <i class="fa fa-tags"></i> Categorías
+                        </a>
                     </div>
                     <div class="box-body">
                         <c:choose>
@@ -131,8 +134,6 @@
                                                 </form>
                                             </div>
                                         </div>
-
-
                                         <!-- Modal Eliminar -->
                                         <div class="modal fade" id="modalEliminar${p.idProducto}" tabindex="-1">
                                             <div class="modal-dialog">
@@ -165,7 +166,6 @@
                 </div>
             </section>
         </div>
-
         <!-- Modal Agregar -->
         <div class="modal fade" id="modalAgregar" tabindex="-1">
             <div class="modal-dialog">
@@ -206,7 +206,6 @@
                 </form>
             </div>
         </div>
-
 
         <%@ include file="/vistas/includes/footer.jsp" %>
 
