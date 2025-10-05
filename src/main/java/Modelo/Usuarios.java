@@ -12,7 +12,8 @@ public class Usuarios {
     private boolean estado;
     private Rol rol;
     private String ultimoAcceso;
-    
+    private java.util.Date fechaRegistro;
+
     // Getters y Setters
     public int getIdUsuario() {
         return idUsuario;
@@ -92,6 +93,14 @@ public class Usuarios {
 
     public void setUltimoAcceso(String ultimoAcceso) {
         this.ultimoAcceso = ultimoAcceso;
+    }
+
+    public java.util.Date getFechaRegistro() {
+        return fechaRegistro;
+    }
+
+    public void setFechaRegistro(java.util.Date fechaRegistro) {
+        this.fechaRegistro = fechaRegistro;
     }
 
 }

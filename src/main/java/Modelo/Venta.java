@@ -1,6 +1,7 @@
 package Modelo;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 public class Venta {
 
@@ -10,7 +11,8 @@ public class Venta {
     private boolean estado;
     private int idCliente;
     private Integer idVendedor; // Puede ser null
-
+    private List<ItemVenta> productos;
+    
     // Constructores
     public Venta() {
     }
@@ -70,6 +72,14 @@ public class Venta {
 
     public void setIdVendedor(Integer idVendedor) {
         this.idVendedor = idVendedor;
+    }
+
+    public List<ItemVenta> getProductos() {
+        return productos;
+    }
+
+    public void setProductos(List<ItemVenta> productos) {
+        this.productos = productos;
     }
 
 }
