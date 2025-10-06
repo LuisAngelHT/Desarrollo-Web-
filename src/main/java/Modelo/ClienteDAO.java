@@ -2,184 +2,134 @@ package Modelo;
 
 import Config.conexion;
 import java.sql.*;
-import java.util.*;
-import java.sql.Date; // para SQL
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClienteDAO {
 
-    private final conexion conexion = new conexion();
+    public List<Cliente> listarClientes() throws Exception {
+        List<Cliente> lista = new ArrayList<>();
+        String sql = "SELECT id_usuario, nombre, apellido, email, telefono, direccion, estado, id_rol "
+                + "FROM usuario WHERE id_rol = 3 ORDER BY id_usuario DESC";
 
-    // Listar clientes atendidos por un vendedor
-    public List<Usuarios> listarPorVendedor(int idVendedor) throws Exception {
-        String sql = "SELECT DISTINCT u.* FROM Usuario u "
-                + "JOIN Venta v ON u.id_usuario = v.id_cliente "
-                + "WHERE v.id_vendedor = ? AND u.id_rol = 3";
-        Connection cn = conexion.getConnection();
-        PreparedStatement ps = cn.prepareStatement(sql);
-        ps.setInt(1, idVendedor);
-        ResultSet rs = ps.executeQuery();
+        try (Connection cn = conexion.getConnection(); PreparedStatement ps = cn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
-        List<Usuarios> lista = new ArrayList<>();
-        while (rs.next()) {
-            lista.add(mapearUsuario(rs));
+            while (rs.next()) {
+                Cliente c = new Cliente();
+                c.setIdUsuario(rs.getInt("id_usuario"));
+                c.setNombre(rs.getString("nombre"));
+                c.setApellido(rs.getString("apellido"));
+                c.setEmail(rs.getString("email"));
+                c.setTelefono(rs.getString("telefono"));
+                c.setDireccion(rs.getString("direccion"));
+                c.setEstado(rs.getBoolean("estado"));
+                c.setIdRol(rs.getInt("id_rol"));
+                lista.add(c);
+            }
         }
-
-        rs.close();
-        ps.close();
-        cn.close();
         return lista;
     }
 
-    // Guardar nuevo cliente
-    public void guardar(Usuarios u) throws Exception {
-        String sql = "INSERT INTO Usuario (nombre, apellido, email, clave, telefono, direccion, estado, id_rol, fecha_registro) "
-                + "VALUES (?, ?, ?, ?, ?, ?, TRUE, 3, CURDATE())";
-        Connection cn = conexion.getConnection();
-        PreparedStatement ps = cn.prepareStatement(sql);
-        ps.setString(1, u.getNombre());
-        ps.setString(2, u.getApellido());
-        ps.setString(3, u.getCorreo());
-        ps.setString(4, u.getContrasena() != null ? u.getContrasena() : "123456");
-        ps.setString(5, u.getTelefono());
-        ps.setString(6, u.getDireccion());
-        ps.executeUpdate();
-        ps.close();
-        cn.close();
-    }
+    public Cliente obtenerPorId(int idUsuario) throws Exception {
+        String sql = "SELECT id_usuario, nombre, apellido, email, telefono, direccion, estado, id_rol "
+                + "FROM usuario WHERE id_usuario = ?";
 
-    // Actualizar cliente
-    public void actualizar(Usuarios u) throws Exception {
-        String sql = "UPDATE Usuario SET nombre = ?, apellido = ?, email = ?, telefono = ?, direccion = ? WHERE id_usuario = ?";
-        Connection cn = conexion.getConnection();
-        PreparedStatement ps = cn.prepareStatement(sql);
-        ps.setString(1, u.getNombre());
-        ps.setString(2, u.getApellido());
-        ps.setString(3, u.getCorreo());
-        ps.setString(4, u.getTelefono());
-        ps.setString(5, u.getDireccion());
-        ps.setInt(6, u.getIdUsuario());
-        ps.executeUpdate();
-        ps.close();
-        cn.close();
-    }
+        try (Connection cn = conexion.getConnection(); PreparedStatement ps = cn.prepareStatement(sql)) {
 
-    // Eliminar cliente
-    public void eliminar(int idCliente) throws Exception {
-        String sql = "DELETE FROM Usuario WHERE id_usuario = ? AND id_rol = 3";
-        Connection cn = conexion.getConnection();
-        PreparedStatement ps = cn.prepareStatement(sql);
-        ps.setInt(1, idCliente);
-        ps.executeUpdate();
-        ps.close();
-        cn.close();
-    }
+            ps.setInt(1, idUsuario);
+            ResultSet rs = ps.executeQuery();
 
-    // Obtener cliente por ID
-    public Usuarios obtenerPorId(int idCliente) throws Exception {
-        String sql = "SELECT * FROM Usuario WHERE id_usuario = ? AND id_rol = 3";
-        Connection cn = conexion.getConnection();
-        PreparedStatement ps = cn.prepareStatement(sql);
-        ps.setInt(1, idCliente);
-        ResultSet rs = ps.executeQuery();
-
-        Usuarios u = null;
-        if (rs.next()) {
-            u = mapearUsuario(rs);
+            if (rs.next()) {
+                Cliente c = new Cliente();
+                c.setIdUsuario(rs.getInt("id_usuario"));
+                c.setNombre(rs.getString("nombre"));
+                c.setApellido(rs.getString("apellido"));
+                c.setEmail(rs.getString("email"));
+                c.setTelefono(rs.getString("telefono"));
+                c.setDireccion(rs.getString("direccion"));
+                c.setEstado(rs.getBoolean("estado"));
+                c.setIdRol(rs.getInt("id_rol"));
+                return c;
+            }
         }
-
-        rs.close();
-        ps.close();
-        cn.close();
-        return u;
+        return null;
     }
 
-    // Obtener historial de compras
+    public int contarClientes() throws Exception {
+        String sql = "SELECT COUNT(*) FROM usuario WHERE id_rol = 3";
+
+        try (Connection cn = conexion.getConnection(); PreparedStatement ps = cn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return 0;
+    }
+
     public List<Venta> obtenerHistorialCompras(int idCliente) throws Exception {
-        String sql = "SELECT * FROM Venta WHERE id_cliente = ? ORDER BY fecha_venta DESC";
-        Connection cn = conexion.getConnection();
-        PreparedStatement ps = cn.prepareStatement(sql);
-        ps.setInt(1, idCliente);
-        ResultSet rs = ps.executeQuery();
+        List<Venta> historial = new ArrayList<>();
+        String sql = "SELECT id_venta, fecha_venta, total_final, estado "
+                + "FROM venta WHERE id_cliente = ? ORDER BY fecha_venta DESC";
 
-        List<Venta> lista = new ArrayList<>();
-        while (rs.next()) {
-            Venta v = new Venta();
-            v.setIdVenta(rs.getInt("id_venta"));
-            v.setFechaVenta(rs.getTimestamp("fecha_venta"));
-            v.setTotalFinal(rs.getDouble("total_final"));
-            v.setEstado(rs.getBoolean("estado"));
-            v.setIdCliente(rs.getInt("id_cliente"));
-            v.setIdVendedor(rs.getObject("id_vendedor") != null ? rs.getInt("id_vendedor") : null);
-            v.setProductos(obtenerProductosPorVenta(v.getIdVenta()));
-            lista.add(v);
+        try (Connection cn = conexion.getConnection(); PreparedStatement ps = cn.prepareStatement(sql)) {
+
+            ps.setInt(1, idCliente);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Venta venta = new Venta();
+                venta.setIdVenta(rs.getInt("id_venta"));
+                venta.setFechaVenta(rs.getTimestamp("fecha_venta"));
+                venta.setTotalFinal(rs.getDouble("total_final"));
+                venta.setEstado(rs.getBoolean("estado"));
+
+                // Obtener productos de esta venta
+                venta.setProductos(obtenerDetalleVenta(venta.getIdVenta()));
+
+                historial.add(venta);
+            }
         }
-
-        rs.close();
-        ps.close();
-        cn.close();
-        return lista;
+        return historial;
     }
 
-    // Obtener productos por venta
-    private List<ItemVenta> obtenerProductosPorVenta(int idVenta) throws Exception {
-        String sql = "SELECT p.nombre AS nombreProducto, dv.cantidad, dv.precio_unitario_venta "
-                + "FROM Detalle_Venta dv "
-                + "JOIN Inventario i ON dv.id_inventario = i.id_inventario "
-                + "JOIN Producto p ON i.id_producto = p.id_producto "
+    private List<ItemVenta> obtenerDetalleVenta(int idVenta) throws Exception {
+        List<ItemVenta> items = new ArrayList<>();
+        String sql = "SELECT dv.cantidad, dv.precio_unitario_venta, p.nombre AS nombreProducto "
+                + "FROM detalle_venta dv "
+                + "JOIN inventario i ON dv.id_inventario = i.id_inventario "
+                + "JOIN producto p ON i.id_producto = p.id_producto "
                 + "WHERE dv.id_venta = ?";
-        Connection cn = conexion.getConnection();
-        PreparedStatement ps = cn.prepareStatement(sql);
-        ps.setInt(1, idVenta);
-        ResultSet rs = ps.executeQuery();
 
-        List<ItemVenta> productos = new ArrayList<>();
-        while (rs.next()) {
-            ItemVenta item = new ItemVenta();
-            item.setNombreProducto(rs.getString("nombreProducto"));
-            item.setCantidad(rs.getInt("cantidad"));
-            item.setPrecioUnitario(rs.getDouble("precio_unitario_venta"));
-            productos.add(item);
+        try (Connection cn = conexion.getConnection(); PreparedStatement ps = cn.prepareStatement(sql)) {
+
+            ps.setInt(1, idVenta);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                ItemVenta item = new ItemVenta();
+                item.setNombreProducto(rs.getString("nombreProducto"));
+                item.setCantidad(rs.getInt("cantidad"));
+                item.setPrecioUnitario(rs.getDouble("precio_unitario_venta"));
+                items.add(item);
+            }
         }
-
-        rs.close();
-        ps.close();
-        cn.close();
-        return productos;
+        return items;
     }
 
-    // Obtener total gastado por cliente
     public double obtenerTotalGastado(int idCliente) throws Exception {
-        String sql = "SELECT SUM(total_final) FROM Venta WHERE id_cliente = ?";
-        Connection cn = conexion.getConnection();
-        PreparedStatement ps = cn.prepareStatement(sql);
-        ps.setInt(1, idCliente);
-        ResultSet rs = ps.executeQuery();
-        double total = rs.next() ? rs.getDouble(1) : 0.0;
-        rs.close();
-        ps.close();
-        cn.close();
-        return total;
-    }
+        String sql = "SELECT COALESCE(SUM(total_final), 0) AS total "
+                + "FROM venta WHERE id_cliente = ? AND estado = 1";
 
-    // Mapear usuario desde ResultSet
-    private Usuarios mapearUsuario(ResultSet rs) throws Exception {
-        Usuarios u = new Usuarios();
-        u.setIdUsuario(rs.getInt("id_usuario"));
-        u.setNombre(rs.getString("nombre"));
-        u.setApellido(rs.getString("apellido"));
-        u.setCorreo(rs.getString("email"));
-        u.setTelefono(rs.getString("telefono"));
-        u.setDireccion(rs.getString("direccion"));
-        u.setEstado(rs.getBoolean("estado"));
-        try {
-            u.setFechaRegistro(rs.getDate("fecha_registro"));
-        } catch (SQLException e) {
-            u.setFechaRegistro(null);
+        try (Connection cn = conexion.getConnection(); PreparedStatement ps = cn.prepareStatement(sql)) {
+
+            ps.setInt(1, idCliente);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getDouble("total");
+            }
         }
-        Rol rol = new Rol();
-        rol.setIdRol(3);
-        rol.setNombreRol("Cliente");
-        u.setRol(rol);
-        return u;
+        return 0.0;
     }
 }

@@ -7,6 +7,7 @@ public class DetalleVenta {
     private int idInventario;
     private int cantidad;
     private double precioUnitarioVenta;
+    private String nombreProducto;
 
     // Constructores
     public DetalleVenta() {
@@ -58,6 +59,14 @@ public class DetalleVenta {
 
     public void setPrecioUnitarioVenta(double precioUnitarioVenta) {
         this.precioUnitarioVenta = precioUnitarioVenta;
+    }
+
+    public String getNombreProducto() {
+        return nombreProducto;
+    }
+
+    public void setNombreProducto(String nombreProducto) {
+        this.nombreProducto = nombreProducto;
     }
 
 }

@@ -8,7 +8,7 @@
     <head>
         <title>Panel del Vendedor</title>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/custom/css/custom.css">
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js CDN -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </head>
     <body>
         <%@ include file="/vistas/includes/header-vendedor.jsp" %>
@@ -17,173 +17,127 @@
         <div class="content-wrapper">
             <section class="content-header">
                 <h1>Panel del Vendedor</h1>
-                <small>Resumen de tu actividad</small>
+                <small>Bienvenido, ${nombre}</small>
             </section>
 
             <section class="content">
-                <!-- Filtros por fecha -->
-                <form method="get" action="srvDashboardVendedor" class="form-inline mb-3">
-                    <div class="form-group">
-                        <label for="desde">Desde:</label>
-                        <input type="date" name="desde" id="desde" class="form-control" value="${desde}">
-                    </div>
-                    <div class="form-group ml-2">
-                        <label for="hasta">Hasta:</label>
-                        <input type="date" name="hasta" id="hasta" class="form-control" value="${hasta}">
-                    </div>
-                    <button type="submit" class="btn btn-primary ml-2">Filtrar</button>
-                </form>
-
-                <p class="text-muted">Mostrando datos desde <strong>${desde}</strong> hasta <strong>${hasta}</strong></p>
-
-                <c:set var="totalProductos" value="10" />
-                <c:set var="ventasHoy" value="5" />
-                <c:set var="totalClientes" value="20" />
-                <c:set var="inventarioBajo" value="3" />
-                <c:set var="ventasFiltradas" value="12" />
-                <c:set var="ingresosFiltrados" value="450.75" />
-                <c:set var="ventasPorDiaSemanaJson" value="[2, 3, 1, 0, 4, 2, 0]" />
-                <c:set var="productosTop" value="${[
-                                                   {'nombre':'Producto A','cantidad':5},
-                                                   {'nombre':'Producto B','cantidad':3}
-                                                   ]}" />
-                <c:set var="ventasRecientes" value="${[
-                                                      {'fecha':now, 'nombreCliente':'Juan', 'nombreProducto':'Producto A', 'estado':'Confirmada'}
-                                                      ]}" />
-                <c:set var="clientesRecientes" value="${[
-                                                        {'nombre':'Ana','apellido':'Gómez','estado':'Activo','dni':'12345678','fechaRegistro':now}
-                                                        ]}" />
-                <c:set var="clientesSemana" value="1" />
-
-
-                <!-- Métricas generales -->
+                <!-- Métricas generales dinámicas -->
                 <div class="row">
-                    <c:set var="productos" value="${totalProductos != null ? totalProductos : 0}" />
-                    <c:set var="ventas" value="${ventasHoy != null ? ventasHoy : 0}" />
-                    <c:set var="clientes" value="${totalClientes != null ? totalClientes : 0}" />
-                    <c:set var="stockBajo" value="${inventarioBajo != null ? inventarioBajo : 0}" />
-
-                    <div class="col-lg-3 col-xs-6">
-                        <div class="small-box bg-gradient-aqua dashboard-box">
-                            <div class="inner">
-                                <h3>${productos}</h3>
-                                <p>Productos disponibles</p>
+                    <c:forEach var="box" items="${resumenBoxes}">
+                        <div class="col-md-3 col-sm-6">
+                            <div class="small-box bg-${box.color}">
+                                <div class="inner">
+                                    <h3>${box.valor}</h3>
+                                    <p>${box.texto}</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="fa ${box.icono}"></i>
+                                </div>
+                                <a href="${box.link}" class="small-box-footer">
+                                    Ver más <i class="fa fa-arrow-circle-right"></i>
+                                </a>
                             </div>
-                            <div class="icon"><i class="fa fa-cube"></i></div>
-                            <a href="srvProductos?accion=listar" class="small-box-footer">Ver productos <i class="fa fa-arrow-circle-right"></i></a>
                         </div>
-                    </div>
-
-                    <div class="col-lg-3 col-xs-6">
-                        <div class="small-box bg-gradient-green dashboard-box">
-                            <div class="inner">
-                                <h3>${ventas}</h3>
-                                <p>Ventas hoy</p>
-                            </div>
-                            <div class="icon"><i class="fa fa-shopping-cart"></i></div>
-                            <a href="srvVentas?accion=listar" class="small-box-footer">Ver ventas <i class="fa fa-arrow-circle-right"></i></a>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-3 col-xs-6">
-                        <div class="small-box bg-gradient-yellow dashboard-box">
-                            <div class="inner">
-                                <h3>${clientes}</h3>
-                                <p>Clientes registrados</p>
-                            </div>
-                            <div class="icon"><i class="fa fa-users"></i></div>
-                            <a href="srvClientes?accion=listar" class="small-box-footer">Ver clientes <i class="fa fa-arrow-circle-right"></i></a>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-3 col-xs-6">
-                        <div class="small-box bg-gradient-red dashboard-box">
-                            <div class="inner">
-                                <h3>${stockBajo}</h3>
-                                <p>Stock bajo</p>
-                            </div>
-                            <div class="icon"><i class="fa fa-exclamation-triangle"></i></div>
-                            <a href="srvInventario?accion=listar" class="small-box-footer">Revisar inventario <i class="fa fa-arrow-circle-right"></i></a>
-                        </div>
-                    </div>
+                    </c:forEach>
                 </div>
 
-                <!-- Métricas filtradas -->
+                <!-- Gráfico y clientes recientes -->
                 <div class="row">
-                    <div class="col-md-6">
-                        <div class="info-box bg-light">
-                            <span class="info-box-icon bg-blue"><i class="fa fa-line-chart"></i></span>
-                            <div class="info-box-content">
-                                <span class="info-box-text">Ventas entre fechas</span>
-                                <span class="info-box-number">${ventasFiltradas}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="info-box bg-light">
-                            <span class="info-box-icon bg-green"><i class="fa fa-money"></i></span>
-                            <div class="info-box-content">
-                                <span class="info-box-text">Ingresos entre fechas (S/)</span>
-                                <span class="info-box-number">${ingresosFiltrados}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Gráfico y productos más vendidos -->
-                <div class="row mt-4">
-                    <div class="col-lg-6">
-                        <div class="box box-info">
+                    <div class="col-lg-8">
+                        <div class="box box-primary">
                             <div class="box-header with-border">
-                                <h3 class="box-title">Ventas esta semana</h3>
+                                <h3 class="box-title">Ventas de los últimos 7 días</h3>
                             </div>
                             <div class="box-body">
-                                <canvas id="graficoVentas" height="120"></canvas>
+                                <canvas id="graficoVentas" height="200"></canvas>
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-lg-6">
-                        <div class="box box-success">
+                    <div class="col-lg-4">
+                        <div class="box box-info">
                             <div class="box-header with-border">
-                                <h3 class="box-title">Top productos vendidos</h3>
+                                <h3 class="box-title">Clientes recientes</h3>
+                                <span class="badge bg-blue pull-right">${clientesSemana}</span>
                             </div>
                             <div class="box-body">
                                 <c:choose>
-                                    <c:when test="${not empty productosTop}">
-                                        <table class="table table-bordered">
+                                    <c:when test="${not empty clientesRecientes}">
+                                        <ul class="list-group">
+                                            <c:forEach var="c" items="${clientesRecientes}">
+                                                <li class="list-group-item">
+                                                    <strong>${c.nombre} ${c.apellido}</strong>
+                                                    <span class="label ${c.estado == 'Activo' ? 'label-success' : 'label-default'} pull-right">
+                                                        ${c.estado}
+                                                    </span>
+                                                    <br>
+                                                    <small class="text-muted">${c.email}</small>
+                                                </li>
+                                            </c:forEach>
+                                        </ul>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <div class="alert alert-info">
+                                            <i class="fa fa-info-circle"></i> No hay clientes registrados.
+                                        </div>
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
+                            <div class="box-footer text-center">
+                                <a href="srvClientes?accion=listar" class="btn btn-sm btn-default">Ver todos</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Últimas ventas -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="box box-warning">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Últimas 5 ventas</h3>
+                            </div>
+                            <div class="box-body">
+                                <c:choose>
+                                    <c:when test="${not empty ventasRecientes}">
+                                        <table class="table table-hover table-striped">
                                             <thead>
                                                 <tr>
+                                                    <th>Fecha</th>
+                                                    <th>Cliente</th>
                                                     <th>Producto</th>
-                                                    <th>Ventas</th>
+                                                    <th>Estado</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <c:forEach var="p" items="${productosTop}">
+                                                <c:forEach var="v" items="${ventasRecientes}">
                                                     <tr>
-                                                        <td>${p.nombre}</td>
-                                                        <td>${p.cantidad}</td>
+                                                        <td><fmt:formatDate value="${v.fecha}" pattern="dd/MM/yyyy HH:mm" /></td>
+                                                        <td>${v.nombreCliente}</td>
+                                                        <td>${v.nombreProducto}</td>
+                                                        <td>
+                                                            <c:choose>
+                                                                <c:when test="${v.estado == 'Confirmada'}">
+                                                                    <span class="label label-success">Confirmada</span>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <span class="label label-warning">Pendiente</span>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </td>
                                                     </tr>
                                                 </c:forEach>
                                             </tbody>
                                         </table>
                                     </c:when>
                                     <c:otherwise>
-                                        <div class="alert alert-info">No hay productos vendidos en este rango.</div>
+                                        <div class="alert alert-info">
+                                            <i class="fa fa-info-circle"></i> No hay ventas registradas.
+                                        </div>
                                     </c:otherwise>
                                 </c:choose>
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Últimas ventas y clientes nuevos -->
-                <div class="row mt-4">
-                    <div class="col-lg-8">
-                        <!-- ... tu bloque de últimas ventas se mantiene igual ... -->
-                    </div>
-                    <div class="col-lg-4">
-                        <!-- ... tu bloque de clientes nuevos se mantiene igual ... -->
                     </div>
                 </div>
             </section>
@@ -191,7 +145,7 @@
 
         <%@ include file="/vistas/includes/footer.jsp" %>
 
-        <!-- Chart.js gráfico -->
+        <!-- Chart.js -->
         <c:if test="${not empty ventasPorDiaSemanaJson}">
             <script>
                 const ctx = document.getElementById('graficoVentas').getContext('2d');
@@ -200,21 +154,29 @@
                 new Chart(ctx, {
                     type: 'bar',
                     data: {
-                        labels: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+                        labels: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
                         datasets: [{
                                 label: 'Ventas',
                                 data: ventasPorDia,
-                                backgroundColor: 'rgba(60,141,188,0.9)'
+                                backgroundColor: 'rgba(60,141,188,0.8)',
+                                borderColor: 'rgba(60,141,188,1)',
+                                borderWidth: 1
                             }]
                     },
                     options: {
                         responsive: true,
+                        maintainAspectRatio: false,
                         scales: {
-                            y: {beginAtZero: true}
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            }
                         }
                     }
                 });
             </script>
         </c:if>
     </body>
-
+</html>

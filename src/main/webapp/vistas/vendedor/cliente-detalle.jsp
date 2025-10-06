@@ -3,10 +3,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ include file="/vistas/includes/head-resources.jsp" %>
 
+<c:set var="pageActive" value="clientes" />
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <title>Detalle del cliente</title>
+    <title>Historial de compras</title>
 </head>
 <body>
     <%@ include file="/vistas/includes/header-vendedor.jsp" %>
@@ -14,93 +15,65 @@
 
     <div class="content-wrapper">
         <section class="content-header">
-            <h1>Detalle del cliente</h1>
-            <small>Información completa y compras realizadas</small>
+            <h1>Historial de compras</h1>
+            <small>Cliente: ${cliente.nombre} ${cliente.apellido}</small>
         </section>
 
         <section class="content">
             <%@ include file="/vistas/includes/alertas.jsp" %>
 
-            <!-- Datos del cliente -->
-            <div class="box box-info">
-                <div class="box-header with-border">
-                    <h3 class="box-title">Información del cliente</h3>
-                </div>
-                <div class="box-body">
-                    <p><strong>Nombre:</strong> ${cliente.nombre} ${cliente.apellido}</p>
-                    <p><strong>Email:</strong> ${cliente.email}</p>
-                    <p><strong>Teléfono:</strong> ${cliente.telefono}</p>
-                    <p><strong>Dirección:</strong> ${cliente.direccion}</p>
-                    <p><strong>Estado:</strong>
-                        <span class="badge ${cliente.estado ? 'badge-success' : 'badge-secondary'}">
-                            ${cliente.estado ? 'Activo' : 'Inactivo'}
-                        </span>
-                    </p>
-                    <p><strong>Fecha de registro:</strong>
-                        <fmt:formatDate value="${cliente.fechaRegistro}" pattern="dd/MM/yyyy" />
-                    </p>
-                </div>
-            </div>
+            <c:choose>
+                <c:when test="${not empty historialCompras}">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">Compras realizadas</h3>
+                        </div>
+                        <div class="box-body">
+                            <c:forEach var="venta" items="${historialCompras}">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <strong>Venta #${venta.idVenta}</strong> - 
+                                        <fmt:formatDate value="${venta.fechaVenta}" pattern="dd/MM/yyyy HH:mm" />
+                                        <span class="label ${venta.estado ? 'label-success' : 'label-danger'}" style="margin-left:10px;">
+                                            ${venta.estado ? 'Completada' : 'Cancelada'}
+                                        </span>
+                                    </div>
+                                    <div class="panel-body">
+                                        <table class="table table-bordered table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th>Producto</th>
+                                                    <th>Cantidad</th>
+                                                    <th>Precio unitario</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <c:forEach var="item" items="${venta.productos}">
+                                                    <tr>
+                                                        <td>${item.nombreProducto}</td>
+                                                        <td>${item.cantidad}</td>
+                                                        <td>S/. ${item.precioUnitario}</td>
+                                                    </tr>
+                                                </c:forEach>
+                                            </tbody>
+                                        </table>
+                                        <p><strong>Total:</strong> S/. ${venta.totalFinal}</p>
+                                    </div>
+                                </div>
+                            </c:forEach>
+                            <hr>
+                            <p><strong>Total gastado por el cliente:</strong> S/. ${totalGastado}</p>
+                        </div>
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <div class="alert alert-info">
+                        Este cliente aún no ha realizado ninguna compra.
+                    </div>
+                </c:otherwise>
+            </c:choose>
 
-            <!-- Historial de compras -->
-            <div class="box box-primary">
-                <div class="box-header with-border">
-                    <h3 class="box-title">Historial de compras</h3>
-                </div>
-                <div class="box-body">
-                    <c:choose>
-                        <c:when test="${not empty historialCompras}">
-                            <table class="table table-bordered table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Fecha</th>
-                                        <th>Productos</th>
-                                        <th>Total</th>
-                                        <th>Estado</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <c:forEach var="venta" items="${historialCompras}">
-                                        <tr>
-                                            <td>
-                                                <fmt:formatDate value="${venta.fechaVenta}" pattern="dd/MM/yyyy HH:mm" />
-                                            </td>
-                                            <td>
-                                                <ul class="list-unstyled">
-                                                    <c:forEach var="item" items="${venta.productos}">
-                                                        <li>${item.nombreProducto} (${item.cantidad} x S/. ${item.precioUnitario})</li>
-                                                    </c:forEach>
-                                                </ul>
-                                            </td>
-                                            <td>S/. ${venta.totalFinal}</td>
-                                            <td>
-                                                <span class="label ${venta.estado == 'Confirmada' ? 'label-success' : venta.estado == 'Pendiente' ? 'label-warning' : 'label-default'}">
-                                                    ${venta.estado}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    </c:forEach>
-                                </tbody>
-                            </table>
-                        </c:when>
-                        <c:otherwise>
-                            <div class="alert alert-info">Este cliente aún no ha realizado compras.</div>
-                        </c:otherwise>
-                    </c:choose>
-                </div>
-            </div>
-
-            <!-- Total gastado -->
-            <div class="box box-success">
-                <div class="box-header with-border">
-                    <h3 class="box-title">Total gastado por el cliente</h3>
-                </div>
-                <div class="box-body">
-                    <h4>S/. ${totalGastado}</h4>
-                </div>
-            </div>
-
-            <a href="srvClientesVendedor?accion=listar" class="btn btn-default">
+            <a href="srvClientes?accion=listar" class="btn btn-default">
                 <i class="fa fa-arrow-left"></i> Volver a clientes
             </a>
         </section>
