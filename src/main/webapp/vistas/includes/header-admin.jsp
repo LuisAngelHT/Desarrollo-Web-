@@ -6,7 +6,7 @@
     <!-- Logo -->
     <a href="${pageContext.request.contextPath}/srvDashboardAdmin" class="logo">
         <span class="logo-mini"><b>S</b>CM</span>
-        <span class="logo-lg"><b>CITAS MEDICAS</b></span>
+        <span class="logo-lg"><b>ECOMMERCE</b></span>
     </a>
 
     <!-- Header Navbar -->

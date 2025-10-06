@@ -8,6 +8,10 @@
         <servlet-name>ControladorUsuario</servlet-name>
         <servlet-class>Controladores.ControladorUsuario</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>srvDashboardCliente</servlet-name>
+        <servlet-class>Controladores.srvDashboardCliente</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>ControladorProductos</servlet-name>
         <url-pattern>/ControladorProductos</url-pattern>
@@ -15,6 +19,10 @@
     <servlet-mapping>
         <servlet-name>ControladorUsuario</servlet-name>
         <url-pattern>/ControladorUsuario</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>srvDashboardCliente</servlet-name>
+        <url-pattern>/srvDashboardCliente</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

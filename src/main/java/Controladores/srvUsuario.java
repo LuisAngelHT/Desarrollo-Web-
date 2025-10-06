@@ -62,7 +62,10 @@ public class srvUsuario extends HttpServlet {
                 response.sendRedirect("srvDashboardAdmin?accion=dashboard");
             } else if (rol.equalsIgnoreCase("Vendedor")) {
                 response.sendRedirect("srvDashboardVendedor?accion=dashboard");
-            } else {
+            } else if (rol.equalsIgnoreCase("Cliente")) {
+                response.sendRedirect("srvDashboardCliente?accion=dashboard");
+            }
+            else {
                 sesion.invalidate();
                 request.setAttribute("error", "Rol no autorizado");
                 request.getRequestDispatcher("identificar.jsp").forward(request, response);

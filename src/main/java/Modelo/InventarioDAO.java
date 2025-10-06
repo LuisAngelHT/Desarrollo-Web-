@@ -31,6 +31,7 @@ public class InventarioDAO {
         }
         return lista;
     }
+    
 
     public void insertar(Inventario inv) throws Exception {
         String sql = "INSERT INTO Inventario (id_producto, talla, color, stock, estado) VALUES (?, ?, ?, ?, ?)";

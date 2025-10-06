@@ -33,6 +33,7 @@ public class ProductoDAO {
         cn.close();
         return lista;
     }
+    
 
     public void insertar(Producto p) throws Exception {
         String sql = "INSERT INTO Producto (nombre, descripcion, precio, imagen_url, id_categoria) VALUES (?, ?, ?, ?, ?)";
