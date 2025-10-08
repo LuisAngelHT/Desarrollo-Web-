@@ -8,7 +8,7 @@
         <title>Productos</title>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/custom/css/custom.css">
     </head>
-    <body>
+    <body class="hold-transition skin-blue sidebar-mini">
         <%@ include file="/vistas/includes/header-vendedor.jsp" %>
         <%@ include file="/vistas/includes/sidebar-vendedor.jsp" %>
 
@@ -73,7 +73,6 @@
                                                             ${inv.talla} / ${inv.color} - ${inv.estado}
                                                         </span><br/>
                                                     </c:forEach>
-                                                </td>
                                                 </td>
                                                 <td>
                                                     <button class="btn btn-xs btn-primary" data-toggle="modal" data-target="#modalEditar${p.idProducto}">

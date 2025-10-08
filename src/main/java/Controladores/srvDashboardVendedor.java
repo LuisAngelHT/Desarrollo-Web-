@@ -36,7 +36,7 @@ public class srvDashboardVendedor extends HttpServlet {
             double ingresosHoy = dao.getIngresosHoy();
 
             // Clientes recientes
-            List<Map<String, Object>> clientesRecientes = dao.getClientesRecientes(5);
+            List<Map<String, Object>> clientesRecientes = dao.getClientesRecientes(3);
 
             // Cajas resumen dinámicas
             List<Map<String, String>> resumenBoxes = new ArrayList<>();

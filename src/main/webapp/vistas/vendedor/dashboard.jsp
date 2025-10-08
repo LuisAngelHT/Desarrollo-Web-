@@ -10,7 +10,7 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/custom/css/custom.css">
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </head>
-    <body>
+    <body class="hold-transition skin-blue sidebar-mini">
         <%@ include file="/vistas/includes/header-vendedor.jsp" %>
         <%@ include file="/vistas/includes/sidebar-vendedor.jsp" %>
 

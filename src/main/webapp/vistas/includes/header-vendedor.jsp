@@ -1,4 +1,3 @@
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <!-- Main Header -->
 <header class="main-header">
@@ -36,7 +35,7 @@
                         <!-- Menu Footer-->
                         <li class="user-footer">
                             <div class="pull-left">
-                                <a href="${pageContext.request.contextPath}/srvUsuario?accion=perfil" class="btn btn-default btn-flat">Perfil</a>
+                                <a href="${pageContext.request.contextPath}/srvUsuario?accion=verPerfil" class="btn btn-default btn-flat">Perfil</a>
                             </div>
                             <div class="pull-right">
                                 <a href="${pageContext.request.contextPath}/srvUsuario?accion=cerrar" class="btn btn-default btn-flat">Cerrar Sesión</a>

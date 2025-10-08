@@ -68,6 +68,10 @@ public class Producto {
         this.nombreCategoria = nombreCategoria;
     }
 
+    public int getStock() {   // ✅ ahora retorna el stock
+        return stock;
+    }
+
     public void setStock(int stock) {
         this.stock = stock;
     }

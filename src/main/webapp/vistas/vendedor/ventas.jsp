@@ -6,7 +6,7 @@
 <head>
     <title>Ventas</title>
 </head>
-<body>
+<body class="hold-transition skin-blue sidebar-mini">
     <%@ include file="/vistas/includes/header-vendedor.jsp" %>
     <%@ include file="/vistas/includes/sidebar-vendedor.jsp" %>
 

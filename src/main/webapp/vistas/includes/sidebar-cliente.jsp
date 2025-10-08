@@ -1,4 +1,3 @@
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <aside class="main-sidebar">
     <section class="sidebar">
@@ -7,7 +6,7 @@
 
             <%-- ENLACE PRINCIPAL: TIENDA/CATÁLOGO --%>
             <li class="${pageActive == 'tienda' ? 'active' : ''}">
-                <a href="${pageContext.request.contextPath}/srvDashboardCliente?accion=dashboard">
+                <a href="${pageContext.request.contextPath}/srvCatalogo?accion=catalogo">
                     <i class="fa fa-shopping-basket"></i> <span>Tienda / Catálogo</span>
                 </a>
             </li>

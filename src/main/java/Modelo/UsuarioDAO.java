@@ -172,4 +172,76 @@ public class UsuarioDAO extends conexion {
         return null;
     }
 
+    // AGREGAR ESTOS MÉTODOS A TU CLASE UsuarioDAO
+    /**
+     * Actualiza los datos personales de un usuario (nombre, apellido, teléfono,
+     * dirección)
+     *
+     * @param usuario Usuario con los datos actualizados
+     * @return true si se actualizó correctamente, false en caso contrario
+     */
+    public boolean actualizarDatos(Usuarios usuario) throws Exception {
+        String sql = "UPDATE Usuario SET nombre=?, apellido=?, telefono=?, direccion=? WHERE email=?";
+
+        try (Connection cn = getConnection(); PreparedStatement ps = cn.prepareStatement(sql)) {
+
+            ps.setString(1, usuario.getNombre());
+            ps.setString(2, usuario.getApellido());
+            ps.setString(3, usuario.getTelefono());
+            ps.setString(4, usuario.getDireccion());
+            ps.setString(5, usuario.getCorreo());
+
+            int filasAfectadas = ps.executeUpdate();
+            return filasAfectadas > 0;
+
+        } catch (Exception e) {
+            System.err.println("Error al actualizar datos del usuario: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    /**
+     * Cambia la contraseña de un usuario
+     *
+     * @param email Email del usuario
+     * @param passwordActual Contraseña actual (para verificar)
+     * @param passwordNueva Nueva contraseña
+     * @return true si se cambió correctamente, false si la contraseña actual es
+     * incorrecta
+     */
+    public boolean cambiarPassword(String email, String passwordActual, String passwordNueva) throws Exception {
+        // Primero verificar que la contraseña actual sea correcta
+        String sqlVerificar = "SELECT id_usuario FROM Usuario WHERE email=? AND clave=?";
+        String sqlActualizar = "UPDATE Usuario SET clave=? WHERE email=?";
+
+        try (Connection cn = getConnection()) {
+
+            // Verificar contraseña actual
+            try (PreparedStatement psVerificar = cn.prepareStatement(sqlVerificar)) {
+                psVerificar.setString(1, email);
+                psVerificar.setString(2, passwordActual);
+
+                try (ResultSet rs = psVerificar.executeQuery()) {
+                    if (!rs.next()) {
+                        // La contraseña actual es incorrecta
+                        return false;
+                    }
+                }
+            }
+
+            // Si llegamos aquí, la contraseña actual es correcta, procedemos a actualizar
+            try (PreparedStatement psActualizar = cn.prepareStatement(sqlActualizar)) {
+                psActualizar.setString(1, passwordNueva);
+                psActualizar.setString(2, email);
+
+                int filasAfectadas = psActualizar.executeUpdate();
+                return filasAfectadas > 0;
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error al cambiar contraseña: " + e.getMessage());
+            throw e;
+        }
+    }
+
 }

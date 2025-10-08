@@ -1,4 +1,3 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
@@ -38,10 +37,10 @@
                         </li>
                         <li class="user-footer">
                             <div class="pull-left">
-                                <a href="#" class="btn btn-default btn-flat">Perfil</a>
+                                <a href="${pageContext.request.contextPath}/srvUsuario?accion=verPerfil" class="btn btn-default btn-flat">Perfil</a>
                             </div>
                             <div class="pull-right">
-                                <a href="${pageContext.request.contextPath}/srvUsuario?accion=cerrar" class="btn btn-default btn-flat">Cerrar SesiÃ³n</a>
+                                <a href="${pageContext.request.contextPath}/srvUsuario?accion=cerrar" class="btn btn-default btn-flat">Cerrar Sesión</a>
                             </div>
                         </li>
                     </ul>
@@ -61,7 +60,7 @@
             </div>
 
             <div class="modal-body">
-                <%-- YA NO USES JSTL DENTRO DEL BODY DEL MODAL, ELIMÃNALO Y DEJA LA ESTRUCTURA HTML VACÃA --%>
+                <%-- YA NO USES JSTL DENTRO DEL BODY DEL MODAL, ELIMÍNALO Y DEJA LA ESTRUCTURA HTML VACÍA --%>
 
                 <ul id="cart-list-modal" class="list-group list-group-flush">
                 </ul>

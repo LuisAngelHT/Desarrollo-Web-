@@ -10,7 +10,7 @@
     </servlet>
     <servlet>
         <servlet-name>srvDashboardCliente</servlet-name>
-        <servlet-class>Controladores.srvDashboardCliente</servlet-class>
+        <servlet-class>Controladores.srvCatalogoProductos</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>ControladorProductos</servlet-name>

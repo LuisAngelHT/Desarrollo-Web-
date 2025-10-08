@@ -27,6 +27,15 @@ public class srvUsuario extends HttpServlet {
                     case "cerrar":
                         cerrarSesion(request, response);
                         break;
+                    case "verPerfil":
+                        verPerfil(request, response);
+                        break;
+                    case "actualizarDatos":
+                        actualizarDatos(request, response);
+                        break;
+                    case "cambiarPassword":
+                        cambiarPassword(request, response);
+                        break;
                     default:
                         response.sendRedirect("identificar.jsp");
                         break;
@@ -36,7 +45,7 @@ public class srvUsuario extends HttpServlet {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Error interno en el sistema");
+            request.setAttribute("error", "Error interno en el sistema: " + e.getMessage());
             request.getRequestDispatcher("/mensaje.jsp").forward(request, response);
         }
     }
@@ -55,7 +64,7 @@ public class srvUsuario extends HttpServlet {
             String fechaAcceso = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
             usuario.setUltimoAcceso(fechaAcceso);
 
-            sesion = request.getSession();
+            sesion = request.getSession(true);
             sesion.setAttribute("usuario", usuario);
 
             if (rol.equalsIgnoreCase("Administrador")) {
@@ -63,9 +72,8 @@ public class srvUsuario extends HttpServlet {
             } else if (rol.equalsIgnoreCase("Vendedor")) {
                 response.sendRedirect("srvDashboardVendedor?accion=dashboard");
             } else if (rol.equalsIgnoreCase("Cliente")) {
-                response.sendRedirect("srvDashboardCliente?accion=dashboard");
-            }
-            else {
+                response.sendRedirect("srvCatalogo?accion=catalogo");
+            } else {
                 sesion.invalidate();
                 request.setAttribute("error", "Rol no autorizado");
                 request.getRequestDispatcher("identificar.jsp").forward(request, response);
@@ -77,8 +85,10 @@ public class srvUsuario extends HttpServlet {
     }
 
     private void cerrarSesion(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        HttpSession sesion = request.getSession();
-        sesion.invalidate();
+        HttpSession sesion = request.getSession(false);
+        if (sesion != null) {
+            sesion.invalidate();
+        }
         response.sendRedirect("identificar.jsp");
     }
 
@@ -87,6 +97,113 @@ public class srvUsuario extends HttpServlet {
         u.setCorreo(request.getParameter("txtCorreo"));
         u.setContrasena(request.getParameter("txtPass"));
         return u;
+    }
+
+    private void verPerfil(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        HttpSession sesion = request.getSession(false);
+
+        // Verificar que existe la sesión
+        if (sesion == null) {
+            response.sendRedirect("identificar.jsp");
+            return;
+        }
+
+        Usuarios usuario = (Usuarios) sesion.getAttribute("usuario");
+
+        // Verificar que el usuario existe en la sesión
+        if (usuario == null) {
+            response.sendRedirect("identificar.jsp");
+            return;
+        }
+
+        // No es necesario volver a establecer el usuario en el request
+        // porque ya está disponible en la sesión con ${usuario}
+        // Pero si lo necesitas, puedes dejarlo
+        request.setAttribute("usuario", usuario);
+
+        // Forward a la página de perfil
+        request.getRequestDispatcher("perfil.jsp").forward(request, response);
+    }
+
+    private void actualizarDatos(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        HttpSession sesion = request.getSession(false);
+
+        if (sesion == null) {
+            response.sendRedirect("identificar.jsp");
+            return;
+        }
+
+        Usuarios usuario = (Usuarios) sesion.getAttribute("usuario");
+
+        if (usuario == null) {
+            response.sendRedirect("identificar.jsp");
+            return;
+        }
+
+        // Obtener nuevos datos del formulario
+        usuario.setNombre(request.getParameter("txtNombre"));
+        usuario.setApellido(request.getParameter("txtApellido"));
+        usuario.setTelefono(request.getParameter("txtTelefono"));
+        usuario.setDireccion(request.getParameter("txtDireccion"));
+
+        // Actualizar en la base de datos
+        UsuarioDAO dao = new UsuarioDAO();
+        boolean actualizado = dao.actualizarDatos(usuario);
+
+        if (actualizado) {
+            // Actualizar la sesión con los nuevos datos
+            sesion.setAttribute("usuario", usuario);
+            request.setAttribute("success", "Datos actualizados correctamente");
+        } else {
+            request.setAttribute("error", "Error al actualizar los datos");
+        }
+
+        request.getRequestDispatcher("perfil.jsp").forward(request, response);
+    }
+
+    private void cambiarPassword(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        HttpSession sesion = request.getSession(false);
+
+        if (sesion == null) {
+            response.sendRedirect("identificar.jsp");
+            return;
+        }
+
+        Usuarios usuario = (Usuarios) sesion.getAttribute("usuario");
+
+        if (usuario == null) {
+            response.sendRedirect("identificar.jsp");
+            return;
+        }
+
+        String passwordActual = request.getParameter("txtPasswordActual");
+        String passwordNueva = request.getParameter("txtPasswordNueva");
+        String passwordConfirmar = request.getParameter("txtPasswordConfirmar");
+
+        // Validaciones
+        if (!passwordNueva.equals(passwordConfirmar)) {
+            request.setAttribute("error", "Las contraseñas nuevas no coinciden");
+            request.getRequestDispatcher("perfil.jsp").forward(request, response);
+            return;
+        }
+
+        if (passwordNueva.length() < 6) {
+            request.setAttribute("error", "La contraseña debe tener al menos 6 caracteres");
+            request.getRequestDispatcher("perfil.jsp").forward(request, response);
+            return;
+        }
+
+        // Cambiar contraseña en la base de datos
+        UsuarioDAO dao = new UsuarioDAO();
+        boolean cambiado = dao.cambiarPassword(usuario.getCorreo(), passwordActual, passwordNueva);
+
+        if (cambiado) {
+            request.setAttribute("success", "Contraseña actualizada correctamente");
+        } else {
+            request.setAttribute("error", "La contraseña actual es incorrecta");
+        }
+
+        request.getRequestDispatcher("perfil.jsp").forward(request, response);
     }
 
     @Override
@@ -103,6 +220,6 @@ public class srvUsuario extends HttpServlet {
 
     @Override
     public String getServletInfo() {
-        return "Controlador de autenticación para Administrador y Vendedor";
+        return "Controlador de autenticación para Administrador, Vendedor y Cliente";
     }
 }
