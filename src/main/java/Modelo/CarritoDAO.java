@@ -58,12 +58,13 @@ public class CarritoDAO {
      */
     public List<Carrito> obtenerCarritoCliente(int idCliente) {
         List<Carrito> items = new ArrayList<>();
-        String sql = "SELECT c.*, p.nombre, p.precio, p.imagen_url, "
+        String sql = "SELECT c.id_carrito, c.id_cliente, c.id_inventario, c.cantidad, "
+                + "c.fecha_agregado, p.nombre, p.precio, p.imagen_url, "
                 + "i.talla, i.color, i.stock "
                 + "FROM Carrito c "
                 + "INNER JOIN Inventario i ON c.id_inventario = i.id_inventario "
                 + "INNER JOIN Producto p ON i.id_producto = p.id_producto "
-                + "WHERE c.id_cliente = ? AND i.estado = 1 "
+                + "WHERE c.id_cliente = ? AND i.estado = 'activo' "
                 + "ORDER BY c.fecha_agregado DESC";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -87,8 +88,15 @@ public class CarritoDAO {
                 item.setStockDisponible(rs.getInt("stock"));
 
                 items.add(item);
+
+                // DEBUG: Imprimir cada item encontrado
+                System.out.println("Item encontrado: " + item.getNombreProducto() + " - Cantidad: " + item.getCantidad());
             }
+
+            System.out.println("Total items recuperados: " + items.size());
+
         } catch (SQLException e) {
+            System.err.println("❌ ERROR en obtenerCarritoCliente:");
             e.printStackTrace();
         }
 
@@ -188,4 +196,24 @@ public class CarritoDAO {
 
         return 0.0;
     }
+    public Carrito obtenerItemPorId(int idCarrito) {
+    String sql = "SELECT * FROM Carrito WHERE id_carrito = ?";
+    
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.setInt(1, idCarrito);
+        ResultSet rs = ps.executeQuery();
+        
+        if (rs.next()) {
+            Carrito item = new Carrito();
+            item.setIdCarrito(rs.getInt("id_carrito"));
+            item.setIdCliente(rs.getInt("id_cliente"));
+            item.setIdInventario(rs.getInt("id_inventario"));
+            item.setCantidad(rs.getInt("cantidad"));
+            return item;
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return null;
+}
 }

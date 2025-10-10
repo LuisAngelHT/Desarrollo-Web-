@@ -14,7 +14,7 @@ public class ProductoClienteDAO {
     private Connection conn;
 
     public ProductoClienteDAO() {
-        conexion conexion = new conexion();
+        conexion conexion = new conexion(); 
         this.conn = conexion.getConnection();
     }
 
@@ -61,7 +61,7 @@ public class ProductoClienteDAO {
                 + "FROM Carrito c "
                 + "INNER JOIN Inventario i ON c.id_inventario = i.id_inventario "
                 + "INNER JOIN Producto p ON i.id_producto = p.id_producto "
-                + "WHERE c.id_cliente = ? AND i.estado = 1 "
+                + "WHERE c.id_cliente = ? AND i.estado = 'activo' "
                 + "ORDER BY c.fecha_agregado DESC";
 
         try {

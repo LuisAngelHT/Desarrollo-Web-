@@ -1,10 +1,14 @@
 package Controladores;
 
+import Modelo.Carrito;
+import Modelo.CarritoDAO;
+import Modelo.ProductoClienteDAO;
 import Modelo.UsuarioDAO;
 import Modelo.Usuarios;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
@@ -66,7 +70,7 @@ public class srvUsuario extends HttpServlet {
 
             sesion = request.getSession(true);
             sesion.setAttribute("usuario", usuario);
-
+            sesion.setAttribute("idCliente", usuario.getIdUsuario());
             if (rol.equalsIgnoreCase("Administrador")) {
                 response.sendRedirect("srvDashboardAdmin?accion=dashboard");
             } else if (rol.equalsIgnoreCase("Vendedor")) {
@@ -78,10 +82,23 @@ public class srvUsuario extends HttpServlet {
                 request.setAttribute("error", "Rol no autorizado");
                 request.getRequestDispatcher("identificar.jsp").forward(request, response);
             }
+            // ✅ AGREGAR ESTO: Cargar carrito inicial
+CarritoDAO carritoDAO = new CarritoDAO();
+List<Carrito> itemsCarrito = carritoDAO.obtenerCarritoCliente(usuario.getIdUsuario());
+int totalItems = carritoDAO.contarItemsCarrito(usuario.getIdUsuario());
+double total = carritoDAO.calcularTotalCarrito(usuario.getIdUsuario());
+
+sesion.setAttribute("itemsCarrito", itemsCarrito);
+sesion.setAttribute("totalItems", totalItems);
+sesion.setAttribute("totalCarrito", total);
+System.out.println("=== LOGIN: Carrito cargado ===");
+System.out.println("Items: " + itemsCarrito.size());
         } else {
             request.setAttribute("error", "Credenciales incorrectas");
             request.getRequestDispatcher("identificar.jsp").forward(request, response);
         }
+        // En tu servlet de login, después de validar credenciales
+        
     }
 
     private void cerrarSesion(HttpServletRequest request, HttpServletResponse response) throws Exception {

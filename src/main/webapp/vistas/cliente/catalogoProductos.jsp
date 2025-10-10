@@ -7,6 +7,14 @@
         <%@ include file="/vistas/includes/head-resources.jsp" %>
     </head>
     <body class="hold-transition skin-blue sidebar-mini">
+        <!-- DEBUG: Eliminar después de probar -->
+        <div style="background: yellow; padding: 10px; margin: 10px;">
+            <strong>DEBUG - Sesión:</strong><br>
+            idCliente: ${sessionScope.idCliente}<br>
+            Items en carrito: ${sessionScope.itemsCarrito.size()}<br>
+            Total items: ${sessionScope.totalItems}<br>
+            Total: ${sessionScope.totalCarrito}
+        </div>
         <div class="wrapper">
 
             <!-- Header y Sidebar -->
@@ -76,19 +84,52 @@
                                                 <!-- Formulario agregar al carrito -->
                                                 <form action="${pageContext.request.contextPath}/srvCarrito" method="post">
                                                     <input type="hidden" name="accion" value="agregar">
-                                                    <input type="hidden" name="cantidad" value="1">
 
                                                     <!-- Selector de inventario -->
                                                     <div class="form-group">
-                                                        <label for="inv-${p.idProducto}">Selecciona color/talla:</label>
-                                                        <select id="inv-${p.idProducto}" name="idInventario" class="form-control">
+                                                        <label for="inv-${p.idProducto}">
+                                                            <i class="fa fa-tag"></i> Color y Talla:
+                                                        </label>
+                                                        <select id="inv-${p.idProducto}" name="idInventario" class="form-control" required>
+                                                            <option value="">-- Selecciona --</option>
                                                             <c:forEach var="inv" items="${inventariosPorProducto[p.idProducto]}">
                                                                 <option value="${inv.idInventario}"
+                                                                        data-stock="${inv.stock}"
                                                                         <c:if test="${inv.stock == 0}">disabled</c:if>>
                                                                     ${inv.color} - ${inv.talla} (Stock: ${inv.stock})
                                                                 </option>
                                                             </c:forEach>
                                                         </select>
+                                                    </div>
+
+                                                    <!-- Selector de cantidad -->
+                                                    <div class="form-group">
+                                                        <label for="cant-${p.idProducto}">
+                                                            <i class="fa fa-shopping-basket"></i> Cantidad:
+                                                        </label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-btn">
+                                                                <button class="btn btn-default btn-sm" type="button" 
+                                                                        onclick="decrementarCantidad('cant-${p.idProducto}')">
+                                                                    <i class="fa fa-minus"></i>
+                                                                </button>
+                                                            </span>
+                                                            <input type="number" 
+                                                                   id="cant-${p.idProducto}" 
+                                                                   name="cantidad" 
+                                                                   class="form-control text-center" 
+                                                                   value="1" 
+                                                                   min="1" 
+                                                                   max="${totalStock}"
+                                                                   required>
+                                                            <span class="input-group-btn">
+                                                                <button class="btn btn-default btn-sm" type="button" 
+                                                                        onclick="incrementarCantidad('cant-${p.idProducto}', ${totalStock})">
+                                                                    <i class="fa fa-plus"></i>
+                                                                </button>
+                                                            </span>
+                                                        </div>
+                                                        <small class="text-muted">Máximo: ${totalStock} unidades</small>
                                                     </div>
 
                                                     <!-- Botón -->
@@ -113,12 +154,103 @@
                     </div>
                 </section>
             </div>
-
             <!-- Footer -->
             <jsp:include page="/vistas/includes/footer.jsp"/>
         </div>
+        <script>
+// Función para incrementar cantidad
+            function incrementarCantidad(inputId, maxStock) {
+                var input = document.getElementById(inputId);
+                var valor = parseInt(input.value);
+                if (valor < maxStock) {
+                    input.value = valor + 1;
+                } else {
+                    toastr.warning('Stock máximo alcanzado: ' + maxStock + ' unidades', 'Límite de stock');
+                }
+            }
 
+// Función para decrementar cantidad
+            function decrementarCantidad(inputId) {
+                var input = document.getElementById(inputId);
+                var valor = parseInt(input.value);
+                if (valor > 1) {
+                    input.value = valor - 1;
+                } else {
+                    toastr.info('La cantidad mínima es 1', 'Cantidad mínima');
+                }
+            }
 
+// Validar stock al seleccionar inventario
+            $(document).ready(function () {
+                // Configurar Toastr
+                toastr.options = {
+                    "closeButton": true,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "timeOut": "3000"
+                };
 
+                // Validar stock al cambiar inventario
+                $('select[name="idInventario"]').on('change', function () {
+                    var stock = $(this).find(':selected').data('stock');
+                    var cantidadInput = $(this).closest('form').find('input[name="cantidad"]');
+
+                    if (stock) {
+                        cantidadInput.attr('max', stock);
+                        if (parseInt(cantidadInput.val()) > stock) {
+                            cantidadInput.val(stock);
+                        }
+
+                        // Deshabilitar botón si no hay stock
+                        var btnAgregar = $(this).closest('form').find('button[type="submit"]');
+                        if (stock === 0) {
+                            btnAgregar.prop('disabled', true);
+                            toastr.error('Este producto está agotado', 'Sin stock');
+                        } else {
+                            btnAgregar.prop('disabled', false);
+                        }
+                    }
+                });
+
+                // Validar cantidad antes de enviar el formulario
+                $('form[action*="srvCarrito"]').on('submit', function (e) {
+                    var cantidad = parseInt($(this).find('input[name="cantidad"]').val());
+                    var maxStock = parseInt($(this).find('input[name="cantidad"]').attr('max'));
+
+                    if (cantidad > maxStock) {
+                        e.preventDefault();
+                        toastr.error('La cantidad solicitada (' + cantidad + ') supera el stock disponible (' + maxStock + ')', 'Stock insuficiente');
+                        return false;
+                    }
+
+                    if (cantidad < 1) {
+                        e.preventDefault();
+                        toastr.warning('La cantidad debe ser al menos 1', 'Cantidad inválida');
+                        return false;
+                    }
+                });
+
+                // Mostrar mensajes de la sesión
+            <c:if test="${not empty sessionScope.mensaje}">
+                var tipoMensaje = '${sessionScope.tipoMensaje}';
+                var mensaje = '${sessionScope.mensaje}';
+
+                if (tipoMensaje === 'success') {
+                    toastr.success(mensaje, '¡Éxito!');
+                } else if (tipoMensaje === 'error') {
+                    toastr.error(mensaje, 'Error');
+                } else if (tipoMensaje === 'warning') {
+                    toastr.warning(mensaje, 'Atención');
+                } else {
+                    toastr.info(mensaje, 'Información');
+                }
+
+                <%
+            session.removeAttribute("mensaje");
+            session.removeAttribute("tipoMensaje");
+                %>
+            </c:if>
+            });
+        </script>
     </body>
 </html>

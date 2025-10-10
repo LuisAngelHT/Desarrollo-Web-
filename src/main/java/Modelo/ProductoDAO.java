@@ -4,7 +4,7 @@ import Config.conexion;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
+import Modelo.*;
 public class ProductoDAO {
 
     public List<Producto> listar() throws Exception {
@@ -33,7 +33,6 @@ public class ProductoDAO {
         cn.close();
         return lista;
     }
-    
 
     public void insertar(Producto p) throws Exception {
         String sql = "INSERT INTO Producto (nombre, descripcion, precio, imagen_url, id_categoria) VALUES (?, ?, ?, ?, ?)";

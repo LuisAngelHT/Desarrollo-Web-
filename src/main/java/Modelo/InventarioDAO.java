@@ -32,7 +32,6 @@ public class InventarioDAO {
         return lista;
     }
     
-
     public void insertar(Inventario inv) throws Exception {
         String sql = "INSERT INTO Inventario (id_producto, talla, color, stock, estado) VALUES (?, ?, ?, ?, ?)";
         
@@ -178,5 +177,72 @@ public class InventarioDAO {
             }
         }
         return 0;
+    }
+    
+    /**
+     * Obtiene un inventario por ID
+     */
+    public Inventario obtenerPorId(int idInventario) {
+        String sql = "SELECT * FROM Inventario WHERE id_inventario = ?";
+        
+        try (Connection cn = conexion.getConnection();
+             PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setInt(1, idInventario);
+            ResultSet rs = ps.executeQuery();
+            
+            if (rs.next()) {
+                Inventario inv = new Inventario();
+                inv.setIdInventario(rs.getInt("id_inventario"));
+                inv.setIdProducto(rs.getInt("id_producto"));
+                inv.setTalla(rs.getString("talla"));
+                inv.setColor(rs.getString("color"));
+                inv.setStock(rs.getInt("stock"));
+                inv.setEstado(rs.getString("estado"));
+                return inv;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    /**
+     * Reduce el stock de un inventario
+     */
+    public boolean reducirStock(int idInventario, int cantidad) {
+        String sql = "UPDATE Inventario SET stock = stock - ? WHERE id_inventario = ? AND stock >= ?";
+        
+        try (Connection cn = conexion.getConnection();
+             PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setInt(1, cantidad);
+            ps.setInt(2, idInventario);
+            ps.setInt(3, cantidad);
+            
+            int filasActualizadas = ps.executeUpdate();
+            return filasActualizadas > 0;
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    /**
+     * Aumenta el stock de un inventario (para cuando se elimine del carrito)
+     */
+    public boolean aumentarStock(int idInventario, int cantidad) {
+        String sql = "UPDATE Inventario SET stock = stock + ? WHERE id_inventario = ?";
+        
+        try (Connection cn = conexion.getConnection();
+             PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setInt(1, cantidad);
+            ps.setInt(2, idInventario);
+            
+            return ps.executeUpdate() > 0;
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
