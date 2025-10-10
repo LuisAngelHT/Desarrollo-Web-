@@ -3,6 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ include file="/vistas/includes/head-resources.jsp" %>
 
+<c:set var="pageActive" value="dashboard" />
 <!DOCTYPE html>
 <html lang="es">
     <head>

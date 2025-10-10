@@ -163,4 +163,19 @@ body {
     text-decoration: none;
 }
 
+@media (max-width: 767px) {
+    .box-header .pull-left {
+        display: block;
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
+
+.badge {
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 

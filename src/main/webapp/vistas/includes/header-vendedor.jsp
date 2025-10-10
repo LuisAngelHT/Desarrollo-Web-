@@ -3,8 +3,8 @@
 <header class="main-header">
     <!-- Logo -->
     <a href="${pageContext.request.contextPath}/srvDashboardVendedor" class="logo">
-        <span class="logo-mini"><b>E</b>C</span>
-        <span class="logo-lg"><b>E-COMMERCE</b> Urbano</span>
+        <span class="logo-mini"><b>U</b>S</span>
+        <span class="logo-lg"><b>URBAN STORE</b></span>
     </a>
 
     <!-- Header Navbar -->

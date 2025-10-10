@@ -3,7 +3,7 @@
     <div class="pull-right hidden-xs">
         <b>Version</b> 1.0
     </div>
-    <strong>Copyright &copy; 2025 <a href="#">Sistema e-commerce</a>.</strong> Todos los derechos reservados.
+    <strong>Copyright &copy; 2025 <a href="#">Urban Store</a>.</strong> Todos los derechos reservados.
 </footer>
 
 <!-- Control Sidebar Background -->
