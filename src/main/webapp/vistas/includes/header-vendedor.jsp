@@ -1,4 +1,3 @@
-
 <!-- Main Header -->
 <header class="main-header">
     <!-- Logo -->
@@ -6,27 +5,33 @@
         <span class="logo-mini"><b>U</b>S</span>
         <span class="logo-lg"><b>URBAN STORE</b></span>
     </a>
-
     <!-- Header Navbar -->
     <nav class="navbar navbar-static-top" role="navigation">
         <!-- Sidebar toggle button-->
         <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
             <span class="sr-only">Toggle navigation</span>
         </a>
-
         <!-- Navbar Right Menu -->
         <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
                 <!-- User Account Menu -->
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <img src="${pageContext.request.contextPath}/dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
+                        <!-- ? CAMBIO 1: Foto dinámica en el navbar -->
+                        <img src="${pageContext.request.contextPath}/${not empty usuario.fotoPerfil ? usuario.fotoPerfil : 'dist/img/user2-160x160.jpg'}" 
+                             class="user-image" 
+                             alt="User Image"
+                             style="object-fit: cover;">
                         <span class="hidden-xs">${usuario.nombre} ${usuario.apellido}</span>
                     </a>
                     <ul class="dropdown-menu">
                         <!-- User image -->
                         <li class="user-header">
-                            <img src="${pageContext.request.contextPath}/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                            <!-- ? CAMBIO 2: Foto dinámica en el dropdown -->
+                            <img src="${pageContext.request.contextPath}/${not empty usuario.fotoPerfil ? usuario.fotoPerfil : 'dist/img/user2-160x160.jpg'}" 
+                                 class="img-circle" 
+                                 alt="User Image"
+                                 style="object-fit: cover;">
                             <p>
                                 ${usuario.nombre} ${usuario.apellido}
                                 <small>Rol: ${usuario.rol.nombreRol}</small>

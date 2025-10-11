@@ -26,12 +26,20 @@
 
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <img src="${pageContext.request.contextPath}/dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
+                        <!-- ? FOTO DINÁMICA EN NAVBAR -->
+                        <img src="${pageContext.request.contextPath}/${not empty usuario.fotoPerfil ? usuario.fotoPerfil : 'dist/img/user2-160x160.jpg'}" 
+                             class="user-image" 
+                             alt="User Image"
+                             style="object-fit: cover;">
                         <span class="hidden-xs">${usuario.nombre} ${usuario.apellido}</span>
                     </a>
                     <ul class="dropdown-menu">
                         <li class="user-header">
-                            <img src="${pageContext.request.contextPath}/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                            <!-- ? FOTO DINÁMICA EN DROPDOWN -->
+                            <img src="${pageContext.request.contextPath}/${not empty usuario.fotoPerfil ? usuario.fotoPerfil : 'dist/img/user2-160x160.jpg'}" 
+                                 class="img-circle" 
+                                 alt="User Image"
+                                 style="object-fit: cover;">
                             <p>
                                 ${usuario.nombre} ${usuario.apellido}
                                 <small>${usuario.rol.nombreRol}</small>
@@ -52,7 +60,7 @@
     </nav>
 </header>
 
-
+<!-- Modal del Carrito (sin cambios) -->
 <div class="modal fade" id="modalCarrito" tabindex="-1" role="dialog" aria-labelledby="modalCarritoLabel">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -90,7 +98,7 @@
                                                     <c:when test="${not empty item.imagenUrl}">
                                                         <img src="${pageContext.request.contextPath}/${item.imagenUrl}" 
                                                              class="img-responsive img-thumbnail" 
-                                                             style="max-height: 60px; max-width: 60px;">
+                                                             style="max-height: 60px; max-width: 60px; object-fit: cover;">
                                                     </c:when>
                                                     <c:otherwise>
                                                         <i class="fa fa-image fa-3x text-muted"></i>
@@ -239,10 +247,7 @@
 
     function vaciarCarrito() {
         if (confirm('¿Estás seguro de vaciar todo el carrito? Se devolverá el stock de todos los productos.')) {
-            // ? Cerrar el modal antes de redirigir
             $('#modalCarrito').modal('hide');
-
-            // ? Redirigir con un pequeño delay para que el modal se cierre suavemente
             setTimeout(function () {
                 window.location.href = '${pageContext.request.contextPath}/srvCarrito?accion=vaciar';
             }, 300);
@@ -250,7 +255,6 @@
     }
 
     function generarBoleta() {
-        // Aquí irá tu función para generar la boleta
         alert('Función de generar boleta en desarrollo...');
     }
 </script>
