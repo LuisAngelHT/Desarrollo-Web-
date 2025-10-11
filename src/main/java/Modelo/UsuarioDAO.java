@@ -12,6 +12,7 @@ public class UsuarioDAO extends conexion {
     public Usuarios identificar(Usuarios user) throws Exception {
         Usuarios usu = null;
         String sql = "SELECT U.id_usuario, U.nombre, U.apellido, U.email, U.telefono, U.direccion, U.estado, "
+                + "U.foto_perfil, " // ✅ AGREGAR ESTO
                 + "R.id_rol, R.nombre_rol "
                 + "FROM Usuario U "
                 + "INNER JOIN Rol R ON U.id_rol = R.id_rol "
@@ -32,6 +33,7 @@ public class UsuarioDAO extends conexion {
                     usu.setTelefono(rs.getString("telefono"));
                     usu.setDireccion(rs.getString("direccion"));
                     usu.setEstado(rs.getBoolean("estado"));
+                    usu.setFotoPerfil(rs.getString("foto_perfil"));  // ✅ AGREGAR ESTO
 
                     Rol rol = new Rol();
                     rol.setIdRol(rs.getInt("id_rol"));
@@ -136,6 +138,7 @@ public class UsuarioDAO extends conexion {
      */
     public Usuarios obtenerPorEmail(String email) throws Exception {
         String sql = "SELECT U.id_usuario, U.nombre, U.apellido, U.email, U.telefono, U.direccion, U.estado, "
+                + "U.foto_perfil, " // ✅ AGREGAR ESTO
                 + "R.id_rol, R.nombre_rol "
                 + "FROM Usuario U "
                 + "INNER JOIN Rol R ON U.id_rol = R.id_rol "
@@ -155,6 +158,7 @@ public class UsuarioDAO extends conexion {
                     usu.setTelefono(rs.getString("telefono"));
                     usu.setDireccion(rs.getString("direccion"));
                     usu.setEstado(rs.getBoolean("estado"));
+                    usu.setFotoPerfil(rs.getString("foto_perfil"));  // ✅ AGREGAR ESTO
 
                     Rol rol = new Rol();
                     rol.setIdRol(rs.getInt("id_rol"));
@@ -240,6 +244,31 @@ public class UsuarioDAO extends conexion {
 
         } catch (Exception e) {
             System.err.println("Error al cambiar contraseña: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    // ✅ AGREGAR ESTOS MÉTODOS A TU UsuarioDAO.java
+    /**
+     * Actualiza la foto de perfil de un usuario
+     *
+     * @param idUsuario ID del usuario
+     * @param rutaFoto Ruta de la nueva foto
+     * @return true si se actualizó correctamente
+     */
+    public boolean actualizarFotoPerfil(int idUsuario, String rutaFoto) throws Exception {
+        String sql = "UPDATE Usuario SET foto_perfil = ? WHERE id_usuario = ?";
+
+        try (Connection cn = getConnection(); PreparedStatement ps = cn.prepareStatement(sql)) {
+
+            ps.setString(1, rutaFoto);
+            ps.setInt(2, idUsuario);
+
+            int filasAfectadas = ps.executeUpdate();
+            return filasAfectadas > 0;
+
+        } catch (Exception e) {
+            System.err.println("Error al actualizar foto de perfil: " + e.getMessage());
             throw e;
         }
     }

@@ -13,6 +13,7 @@ public class Usuarios {
     private Rol rol;
     private String ultimoAcceso;
     private java.util.Date fechaRegistro;
+    private String fotoPerfil;
 
     // Getters y Setters
     public int getIdUsuario() {
@@ -101,6 +102,14 @@ public class Usuarios {
 
     public void setFechaRegistro(java.util.Date fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
+    }
+
+    public String getFotoPerfil() {
+        return fotoPerfil;
+    }
+
+    public void setFotoPerfil(String fotoPerfil) {
+        this.fotoPerfil = fotoPerfil;
     }
 
 }

@@ -2,18 +2,21 @@ package Controladores;
 
 import Modelo.Carrito;
 import Modelo.CarritoDAO;
-import Modelo.ProductoClienteDAO;
 import Modelo.UsuarioDAO;
 import Modelo.Usuarios;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 
 @WebServlet(name = "srvUsuario", urlPatterns = {"/srvUsuario"})
+@MultipartConfig  // ✅ IMPORTANTE: Para subir archivos
 public class srvUsuario extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -40,6 +43,9 @@ public class srvUsuario extends HttpServlet {
                     case "cambiarPassword":
                         cambiarPassword(request, response);
                         break;
+                    case "cambiarFoto":  // ✅ NUEVO CASE
+                        cambiarFotoPerfil(request, response);
+                        break;
                     default:
                         response.sendRedirect("identificar.jsp");
                         break;
@@ -49,13 +55,15 @@ public class srvUsuario extends HttpServlet {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Error interno en el sistema: " + e.getMessage());
-            request.getRequestDispatcher("/mensaje.jsp").forward(request, response);
+            HttpSession sesion = request.getSession(false);
+            if (sesion != null) {
+                sesion.setAttribute("error", "Error interno en el sistema: " + e.getMessage());
+            }
+            response.sendRedirect("identificar.jsp");
         }
     }
 
     private void verificar(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        HttpSession sesion;
         UsuarioDAO dao = new UsuarioDAO();
         Usuarios usuario = obtenerUsuario(request);
 
@@ -68,9 +76,23 @@ public class srvUsuario extends HttpServlet {
             String fechaAcceso = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
             usuario.setUltimoAcceso(fechaAcceso);
 
-            sesion = request.getSession(true);
+            HttpSession sesion = request.getSession(true);
             sesion.setAttribute("usuario", usuario);
             sesion.setAttribute("idCliente", usuario.getIdUsuario());
+
+            // Cargar carrito si es cliente
+            if (rol.equalsIgnoreCase("Cliente")) {
+                CarritoDAO carritoDAO = new CarritoDAO();
+                List<Carrito> itemsCarrito = carritoDAO.obtenerCarritoCliente(usuario.getIdUsuario());
+                int totalItems = carritoDAO.contarItemsCarrito(usuario.getIdUsuario());
+                double total = carritoDAO.calcularTotalCarrito(usuario.getIdUsuario());
+
+                sesion.setAttribute("itemsCarrito", itemsCarrito);
+                sesion.setAttribute("totalItems", totalItems);
+                sesion.setAttribute("totalCarrito", total);
+            }
+
+            // Redireccionar según rol
             if (rol.equalsIgnoreCase("Administrador")) {
                 response.sendRedirect("srvDashboardAdmin?accion=dashboard");
             } else if (rol.equalsIgnoreCase("Vendedor")) {
@@ -82,23 +104,10 @@ public class srvUsuario extends HttpServlet {
                 request.setAttribute("error", "Rol no autorizado");
                 request.getRequestDispatcher("identificar.jsp").forward(request, response);
             }
-            // ✅ AGREGAR ESTO: Cargar carrito inicial
-CarritoDAO carritoDAO = new CarritoDAO();
-List<Carrito> itemsCarrito = carritoDAO.obtenerCarritoCliente(usuario.getIdUsuario());
-int totalItems = carritoDAO.contarItemsCarrito(usuario.getIdUsuario());
-double total = carritoDAO.calcularTotalCarrito(usuario.getIdUsuario());
-
-sesion.setAttribute("itemsCarrito", itemsCarrito);
-sesion.setAttribute("totalItems", totalItems);
-sesion.setAttribute("totalCarrito", total);
-System.out.println("=== LOGIN: Carrito cargado ===");
-System.out.println("Items: " + itemsCarrito.size());
         } else {
             request.setAttribute("error", "Credenciales incorrectas");
             request.getRequestDispatcher("identificar.jsp").forward(request, response);
         }
-        // En tu servlet de login, después de validar credenciales
-        
     }
 
     private void cerrarSesion(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -119,7 +128,6 @@ System.out.println("Items: " + itemsCarrito.size());
     private void verPerfil(HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpSession sesion = request.getSession(false);
 
-        // Verificar que existe la sesión
         if (sesion == null) {
             response.sendRedirect("identificar.jsp");
             return;
@@ -127,18 +135,12 @@ System.out.println("Items: " + itemsCarrito.size());
 
         Usuarios usuario = (Usuarios) sesion.getAttribute("usuario");
 
-        // Verificar que el usuario existe en la sesión
         if (usuario == null) {
             response.sendRedirect("identificar.jsp");
             return;
         }
 
-        // No es necesario volver a establecer el usuario en el request
-        // porque ya está disponible en la sesión con ${usuario}
-        // Pero si lo necesitas, puedes dejarlo
         request.setAttribute("usuario", usuario);
-
-        // Forward a la página de perfil
         request.getRequestDispatcher("perfil.jsp").forward(request, response);
     }
 
@@ -168,14 +170,13 @@ System.out.println("Items: " + itemsCarrito.size());
         boolean actualizado = dao.actualizarDatos(usuario);
 
         if (actualizado) {
-            // Actualizar la sesión con los nuevos datos
             sesion.setAttribute("usuario", usuario);
-            request.setAttribute("success", "Datos actualizados correctamente");
+            sesion.setAttribute("exito", "Datos actualizados correctamente");  // ✅ CAMBIO A SESSION
         } else {
-            request.setAttribute("error", "Error al actualizar los datos");
+            sesion.setAttribute("error", "Error al actualizar los datos");
         }
 
-        request.getRequestDispatcher("perfil.jsp").forward(request, response);
+        response.sendRedirect("srvUsuario?accion=verPerfil");  // ✅ REDIRECT EN LUGAR DE FORWARD
     }
 
     private void cambiarPassword(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -199,14 +200,14 @@ System.out.println("Items: " + itemsCarrito.size());
 
         // Validaciones
         if (!passwordNueva.equals(passwordConfirmar)) {
-            request.setAttribute("error", "Las contraseñas nuevas no coinciden");
-            request.getRequestDispatcher("perfil.jsp").forward(request, response);
+            sesion.setAttribute("error", "Las contraseñas nuevas no coinciden");
+            response.sendRedirect("srvUsuario?accion=verPerfil");
             return;
         }
 
         if (passwordNueva.length() < 6) {
-            request.setAttribute("error", "La contraseña debe tener al menos 6 caracteres");
-            request.getRequestDispatcher("perfil.jsp").forward(request, response);
+            sesion.setAttribute("error", "La contraseña debe tener al menos 6 caracteres");
+            response.sendRedirect("srvUsuario?accion=verPerfil");
             return;
         }
 
@@ -215,12 +216,101 @@ System.out.println("Items: " + itemsCarrito.size());
         boolean cambiado = dao.cambiarPassword(usuario.getCorreo(), passwordActual, passwordNueva);
 
         if (cambiado) {
-            request.setAttribute("success", "Contraseña actualizada correctamente");
+            sesion.setAttribute("exito", "Contraseña actualizada correctamente");
         } else {
-            request.setAttribute("error", "La contraseña actual es incorrecta");
+            sesion.setAttribute("error", "La contraseña actual es incorrecta");
         }
 
-        request.getRequestDispatcher("perfil.jsp").forward(request, response);
+        response.sendRedirect("srvUsuario?accion=verPerfil");  // ✅ REDIRECT
+    }
+
+    // ✅ MÉTODO NUEVO PARA CAMBIAR FOTO DE PERFIL
+    private void cambiarFotoPerfil(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        HttpSession sesion = request.getSession(false);
+
+        if (sesion == null) {
+            response.sendRedirect("identificar.jsp");
+            return;
+        }
+
+        Usuarios usuario = (Usuarios) sesion.getAttribute("usuario");
+
+        if (usuario == null) {
+            response.sendRedirect("identificar.jsp");
+            return;
+        }
+
+        try {
+            // Obtener el archivo de imagen
+            Part archivo = request.getPart("fotoPerfil");
+
+            if (archivo == null || archivo.getSize() == 0) {
+                sesion.setAttribute("error", "Debe seleccionar una imagen");
+                response.sendRedirect("srvUsuario?accion=verPerfil");
+                return;
+            }
+
+            String nombreArchivo = Paths.get(archivo.getSubmittedFileName()).getFileName().toString();
+
+            // Validar que sea una imagen
+            if (!nombreArchivo.toLowerCase().matches(".*\\.(jpg|jpeg|png|gif)$")) {
+                sesion.setAttribute("error", "Solo se permiten imágenes (JPG, PNG, GIF)");
+                response.sendRedirect("srvUsuario?accion=verPerfil");
+                return;
+            }
+
+            // Validar tamaño máximo (2MB)
+            if (archivo.getSize() > 2 * 1024 * 1024) {
+                sesion.setAttribute("error", "La imagen no debe superar los 2MB");
+                response.sendRedirect("srvUsuario?accion=verPerfil");
+                return;
+            }
+
+            // Crear carpeta si no existe
+            String rutaServidor = getServletContext().getRealPath("/uploads/perfiles");
+            File carpeta = new File(rutaServidor);
+            if (!carpeta.exists()) {
+                carpeta.mkdirs();
+            }
+
+            // Eliminar foto anterior si existe
+            if (usuario.getFotoPerfil() != null && !usuario.getFotoPerfil().isEmpty()) {
+                String fotoAnterior = getServletContext().getRealPath("/" + usuario.getFotoPerfil());
+                File archivoAnterior = new File(fotoAnterior);
+                if (archivoAnterior.exists() && !usuario.getFotoPerfil().contains("user2-160x160")) {
+                    archivoAnterior.delete();
+                }
+            }
+
+            // Generar nombre único para evitar conflictos
+            String extension = nombreArchivo.substring(nombreArchivo.lastIndexOf("."));
+            String nombreUnico = "perfil_" + usuario.getIdUsuario() + "_" + System.currentTimeMillis() + extension;
+
+            String rutaFinal = rutaServidor + File.separator + nombreUnico;
+            archivo.write(rutaFinal);
+
+            // Guardar ruta relativa en BD
+            String rutaRelativa = "uploads/perfiles/" + nombreUnico;
+
+            // Actualizar en la base de datos
+            UsuarioDAO dao = new UsuarioDAO();
+            boolean actualizado = dao.actualizarFotoPerfil(usuario.getIdUsuario(), rutaRelativa);
+
+            if (actualizado) {
+                // Actualizar el objeto en sesión
+                usuario.setFotoPerfil(rutaRelativa);
+                sesion.setAttribute("usuario", usuario);
+                sesion.setAttribute("exito", "Foto de perfil actualizada correctamente");
+            } else {
+                sesion.setAttribute("error", "Error al actualizar la foto de perfil");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            sesion.setAttribute("error", "Error al procesar la imagen: " + e.getMessage());
+        }
+
+        response.sendRedirect("srvUsuario?accion=verPerfil");
     }
 
     @Override
