@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 
 public class conexion {
     public static final String username = "root";
-    public static final String password = "2004";
+    public static final String password = "1234";
     public static final String database = "ecommerce_urbano";
     public static final String url = "jdbc:mysql://localhost:3306/" + database;
 

@@ -151,7 +151,7 @@
                                 </div>
                                 <form action="${pageContext.request.contextPath}/srvUsuario" method="POST">
                                     <input type="hidden" name="accion" value="actualizarDatos">
-                                    
+
                                     <div class="box-body">
                                         <div class="row">
                                             <div class="col-md-6">
@@ -253,7 +253,7 @@
                                       method="POST" 
                                       id="formPassword">
                                     <input type="hidden" name="accion" value="cambiarPassword">
-                                    
+
                                     <div class="box-body">
                                         <div class="form-group">
                                             <label>
@@ -336,14 +336,14 @@
                           enctype="multipart/form-data"
                           id="formFotoPerfil">
                         <input type="hidden" name="accion" value="cambiarFoto">
-                        
+
                         <div class="modal-body text-center">
                             <!-- Vista previa -->
                             <img id="vistaPrevia" 
                                  src="${pageContext.request.contextPath}/${not empty usuario.fotoPerfil ? usuario.fotoPerfil : 'dist/img/user2-160x160.jpg'}"
                                  class="img-circle"
                                  style="width: 150px; height: 150px; object-fit: cover; margin-bottom: 15px;">
-                            
+
                             <!-- Input file -->
                             <div class="form-group">
                                 <label class="btn btn-default btn-file">
@@ -356,13 +356,13 @@
                                            required>
                                 </label>
                             </div>
-                            
+
                             <small class="text-muted">
                                 <i class="fa fa-info-circle"></i> 
                                 Máximo 2MB (JPG, PNG, GIF)
                             </small>
                         </div>
-                        
+
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary">
                                 <i class="fa fa-save"></i> Guardar
@@ -378,9 +378,9 @@
 
         <!-- Scripts -->
         <script>
-            $(document).ready(function() {
+            $(document).ready(function () {
                 // Validar que las contraseñas coincidan
-                $('#formPassword').on('submit', function(e) {
+                $('#formPassword').on('submit', function (e) {
                     var nueva = $('#passwordNueva').val();
                     var confirmar = $('#passwordConfirmar').val();
                     var mensaje = $('#mensajePassword');
@@ -388,18 +388,18 @@
                     if (nueva !== confirmar) {
                         e.preventDefault();
                         mensaje.removeClass('alert-success')
-                               .addClass('alert-danger')
-                               .html('<i class="fa fa-times-circle"></i> Las contraseñas no coinciden')
-                               .show();
+                                .addClass('alert-danger')
+                                .html('<i class="fa fa-times-circle"></i> Las contraseñas no coinciden')
+                                .show();
                         return false;
                     }
 
                     if (nueva.length < 6) {
                         e.preventDefault();
                         mensaje.removeClass('alert-success')
-                               .addClass('alert-danger')
-                               .html('<i class="fa fa-times-circle"></i> La contraseña debe tener al menos 6 caracteres')
-                               .show();
+                                .addClass('alert-danger')
+                                .html('<i class="fa fa-times-circle"></i> La contraseña debe tener al menos 6 caracteres')
+                                .show();
                         return false;
                     }
 
@@ -407,12 +407,12 @@
                 });
 
                 // Limpiar mensaje al escribir
-                $('#passwordNueva, #passwordConfirmar').on('keyup', function() {
+                $('#passwordNueva, #passwordConfirmar').on('keyup', function () {
                     $('#mensajePassword').hide();
                 });
 
                 // Indicador de fortaleza de contraseña
-                $('#passwordNueva').on('keyup', function() {
+                $('#passwordNueva').on('keyup', function () {
                     var pass = $(this).val();
                     var fortaleza = '';
                     var clase = '';
@@ -430,20 +430,20 @@
 
                     if (fortaleza) {
                         $(this).next('small').html(
-                            '<i class="fa fa-info-circle"></i> Fortaleza: <span class="' + clase + '">' + fortaleza + '</span>'
-                        );
+                                '<i class="fa fa-info-circle"></i> Fortaleza: <span class="' + clase + '">' + fortaleza + '</span>'
+                                );
                     }
                 });
 
                 // Auto-ocultar alertas después de 4 segundos
-                setTimeout(function() {
+                setTimeout(function () {
                     $('.alert').fadeOut('slow');
                 }, 4000);
 
                 // ✅ Vista previa de la foto de perfil
-                $('#inputFoto').on('change', function(e) {
+                $('#inputFoto').on('change', function (e) {
                     var file = e.target.files[0];
-                    
+
                     if (file) {
                         // Validar tamaño
                         if (file.size > 2 * 1024 * 1024) {
@@ -451,17 +451,17 @@
                             $(this).val('');
                             return;
                         }
-                        
+
                         // Validar tipo
                         if (!file.type.match('image.*')) {
                             alert('Solo se permiten imágenes');
                             $(this).val('');
                             return;
                         }
-                        
+
                         // Mostrar vista previa
                         var reader = new FileReader();
-                        reader.onload = function(e) {
+                        reader.onload = function (e) {
                             $('#vistaPrevia').attr('src', e.target.result);
                         };
                         reader.readAsDataURL(file);
@@ -469,19 +469,19 @@
                 });
 
                 // Validar formulario de foto
-                $('#formFotoPerfil').on('submit', function(e) {
+                $('#formFotoPerfil').on('submit', function (e) {
                     var file = $('#inputFoto')[0].files[0];
-                    
+
                     if (!file) {
                         e.preventDefault();
                         alert('Debe seleccionar una imagen');
                         return false;
                     }
-                    
+
                     // Mostrar loading
                     var btn = $(this).find('button[type="submit"]');
                     btn.html('<i class="fa fa-spinner fa-spin"></i> Subiendo...')
-                       .prop('disabled', true);
+                            .prop('disabled', true);
                 });
             });
         </script>
