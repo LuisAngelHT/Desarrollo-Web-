@@ -2,7 +2,7 @@ package Modelo;
 
 public class DetalleVenta {
 
-    private int idDetalle;
+     private int idDetalle;
     private int idVenta;
     private int idInventario;
     private int cantidad;
@@ -68,5 +68,4 @@ public class DetalleVenta {
     public void setNombreProducto(String nombreProducto) {
         this.nombreProducto = nombreProducto;
     }
-
 }

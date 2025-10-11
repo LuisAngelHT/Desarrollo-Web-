@@ -6,12 +6,12 @@ public class ItemVenta {
     private int cantidad;
     private double precioUnitario;
     private double subtotal;
+    private String color;      // ✅ AGREGAR
+    private String talla;      // ✅ AGREGAR
 
-    // Constructor vacío
     public ItemVenta() {
     }
 
-    // Constructor con parámetros
     public ItemVenta(String nombreProducto, int cantidad, double precioUnitario) {
         this.nombreProducto = nombreProducto;
         this.cantidad = cantidad;
@@ -19,7 +19,6 @@ public class ItemVenta {
         this.subtotal = cantidad * precioUnitario;
     }
 
-    // Getters y Setters
     public int getIdDetalleVenta() {
         return idDetalleVenta;
     }
@@ -62,13 +61,19 @@ public class ItemVenta {
         this.subtotal = subtotal;
     }
 
-    @Override
-    public String toString() {
-        return "ItemVenta{" +
-                "nombreProducto='" + nombreProducto + '\'' +
-                ", cantidad=" + cantidad +
-                ", precioUnitario=" + precioUnitario +
-                ", subtotal=" + subtotal +
-                '}';
+    public String getColor() {  // ✅ AGREGAR
+        return color;
+    }
+
+    public void setColor(String color) {  // ✅ AGREGAR
+        this.color = color;
+    }
+
+    public String getTalla() {  // ✅ AGREGAR
+        return talla;
+    }
+
+    public void setTalla(String talla) {  // ✅ AGREGAR
+        this.talla = talla;
     }
 }

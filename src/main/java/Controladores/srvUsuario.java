@@ -141,7 +141,8 @@ public class srvUsuario extends HttpServlet {
         }
 
         request.setAttribute("usuario", usuario);
-        request.getRequestDispatcher("perfil.jsp").forward(request, response);
+        response.sendRedirect("perfil.jsp");
+        //request.getRequestDispatcher("perfil.jsp").forward(request, response);
     }
 
     private void actualizarDatos(HttpServletRequest request, HttpServletResponse response) throws Exception {

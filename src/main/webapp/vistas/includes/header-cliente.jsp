@@ -255,6 +255,8 @@
     }
 
     function generarBoleta() {
-        alert('Función de generar boleta en desarrollo...');
+        if (confirm('¿Deseas procesar el pago y generar la boleta?')) {
+            window.open('${pageContext.request.contextPath}/srvVentas?accion=generarBoleta', '_blank');
+        }
     }
 </script>

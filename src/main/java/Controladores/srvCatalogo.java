@@ -1,5 +1,7 @@
 package Controladores;
 
+import Modelo.Carrito;
+import Modelo.CarritoDAO;
 import Modelo.CatalogoProductoDAO;
 import Modelo.Producto;
 import Modelo.Inventario;
@@ -43,6 +45,10 @@ public class srvCatalogo extends HttpServlet {
     }
 
     private void listar(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        HttpSession session = request.getSession();
+// Obtener todos los productos
+        Integer idCliente = (Integer) session.getAttribute("idCliente");
+
         // Obtener todos los productos
         List<Producto> listaProductos = catalogoDAO.listarProductos();
 
@@ -53,15 +59,31 @@ public class srvCatalogo extends HttpServlet {
                     catalogoDAO.obtenerInventariosPorProducto(p.getIdProducto()));
         }
 
+        // ✅ AGREGAR: Recargar carrito de sesión
+        if (idCliente != null) {
+            CarritoDAO carritoDAO = new CarritoDAO();
+            List<Carrito> itemsCarrito = carritoDAO.obtenerCarritoCliente(idCliente);
+            int totalItems = carritoDAO.contarItemsCarrito(idCliente);
+            double totalCarrito = carritoDAO.calcularTotalCarrito(idCliente);
+
+            session.setAttribute("itemsCarrito", itemsCarrito);
+            session.setAttribute("totalItems", totalItems);
+            session.setAttribute("totalCarrito", totalCarrito);
+
+            System.out.println("Carrito recarado: " + totalItems + " items");
+        }
+
         request.setAttribute("listaProductos", listaProductos);
         request.setAttribute("inventariosPorProducto", inventariosPorProducto);
-
         request.getRequestDispatcher("/vistas/cliente/catalogoProductos.jsp").forward(request, response);
+   
     }
 
     private void buscar(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String criterio = request.getParameter("criterio");
-        if (criterio == null) criterio = "";
+        if (criterio == null) {
+            criterio = "";
+        }
 
         List<Producto> listaProductos = catalogoDAO.buscarProductos(criterio);
 

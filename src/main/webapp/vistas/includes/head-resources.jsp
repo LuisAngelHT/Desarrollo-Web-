@@ -13,6 +13,8 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/skins/skin-blue.min.css">
 
 <link rel="stylesheet" href="${pageContext.request.contextPath}/custom/css/custom.css">
+<!-- jQuery (debe estar ANTES de Toastr) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <!-- Si NO tienes Toastr, agrega esto en head-resources.jsp -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>

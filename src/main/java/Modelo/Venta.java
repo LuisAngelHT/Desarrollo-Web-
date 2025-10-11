@@ -4,16 +4,20 @@ import java.sql.Timestamp;
 import java.util.List;
 
 public class Venta {
-
     private int idVenta;
     private Timestamp fechaVenta;
     private double totalFinal;
     private boolean estado;
     private int idCliente;
-    private Integer idVendedor; // Puede ser null
+    private Integer idVendedor;
     private List<ItemVenta> productos;
     
-    // Constructores
+    // Atributos auxiliares para el PDF
+    private String nombreCliente;
+    private String emailCliente;
+    private String telefonoCliente;
+    private String direccionCliente;
+    
     public Venta() {
     }
 
@@ -80,6 +84,38 @@ public class Venta {
 
     public void setProductos(List<ItemVenta> productos) {
         this.productos = productos;
+    }
+
+    public String getNombreCliente() {
+        return nombreCliente;
+    }
+
+    public void setNombreCliente(String nombreCliente) {
+        this.nombreCliente = nombreCliente;
+    }
+
+    public String getEmailCliente() {
+        return emailCliente;
+    }
+
+    public void setEmailCliente(String emailCliente) {
+        this.emailCliente = emailCliente;
+    }
+
+    public String getTelefonoCliente() {
+        return telefonoCliente;
+    }
+
+    public void setTelefonoCliente(String telefonoCliente) {
+        this.telefonoCliente = telefonoCliente;
+    }
+
+    public String getDireccionCliente() {
+        return direccionCliente;
+    }
+
+    public void setDireccionCliente(String direccionCliente) {
+        this.direccionCliente = direccionCliente;
     }
 
 }

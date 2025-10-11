@@ -7,14 +7,7 @@
         <%@ include file="/vistas/includes/head-resources.jsp" %>
     </head>
     <body class="hold-transition skin-blue sidebar-mini">
-        <!-- DEBUG: Eliminar después de probar -->
-        <div style="background: yellow; padding: 10px; margin: 10px;">
-            <strong>DEBUG - Sesión:</strong><br>
-            idCliente: ${sessionScope.idCliente}<br>
-            Items en carrito: ${sessionScope.itemsCarrito.size()}<br>
-            Total items: ${sessionScope.totalItems}<br>
-            Total: ${sessionScope.totalCarrito}
-        </div>
+        
         <div class="wrapper">
 
             <!-- Header y Sidebar -->
