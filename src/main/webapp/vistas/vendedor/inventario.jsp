@@ -7,7 +7,7 @@
     <head>
         <title>Inventario de ${producto.nombre}</title>
     </head>
-    <body>
+    <body class="hold-transition skin-blue sidebar-mini">
         <%@ include file="/vistas/includes/header-vendedor.jsp" %>
         <%@ include file="/vistas/includes/sidebar-vendedor.jsp" %>
 
@@ -15,6 +15,11 @@
             <section class="content-header">
                 <h1>Inventario de <strong>${producto.nombre}</strong></h1>
                 <small>Gestión por talla y color</small>
+                <ol class="breadcrumb">
+                    <li><a href="srvDashboardVendedor?accion=listar"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+                    <li><a href="srvProductos?accion=listar"> Productos</a></li>
+                    <li class="active"> Inventario</li>
+                </ol>
             </section>
 
             <section class="content">
@@ -182,7 +187,7 @@
                                 </div>
                                 <div class="modal-body">
                                     <input type="hidden" name="idProducto" value="${producto.idProducto}">
-                                    
+
                                     <div class="alert alert-info">
                                         <i class="fa fa-lightbulb-o"></i> Ingresa la cantidad de tallas y colores, luego completa los campos. Se generarán todas las combinaciones posibles.
                                     </div>
@@ -290,7 +295,7 @@
         </div>
 
         <%@ include file="/vistas/includes/footer.jsp" %>
-        
+
         <script>
             function generarInputs(tipo, cantidad) {
                 const contenedorId = tipo === 'talla' ? 'contenedorTallas' : 'contenedorColores';
@@ -310,7 +315,7 @@
             }
 
             // Event listeners para generar inputs dinámicamente
-            document.getElementById('cantidadTallas').addEventListener('input', function() {
+            document.getElementById('cantidadTallas').addEventListener('input', function () {
                 const cantidad = parseInt(this.value) || 0;
                 if (cantidad > 0 && cantidad <= 10) {
                     generarInputs('talla', cantidad);
@@ -319,7 +324,7 @@
                 }
             });
 
-            document.getElementById('cantidadColores').addEventListener('input', function() {
+            document.getElementById('cantidadColores').addEventListener('input', function () {
                 const cantidad = parseInt(this.value) || 0;
                 if (cantidad > 0 && cantidad <= 10) {
                     generarInputs('color', cantidad);
@@ -363,33 +368,33 @@
             // Función para copiar la última combinación registrada
             function copiarUltimaCombinacion() {
                 const tabla = document.querySelector('.table tbody');
-                
+
                 if (!tabla) {
                     alert('No hay combinaciones registradas para copiar.');
                     return;
                 }
 
                 const filas = tabla.querySelectorAll('tr');
-                
+
                 if (filas.length === 0) {
                     alert('No hay combinaciones registradas para copiar.');
                     return;
                 }
-                
+
                 // La primera fila es la más reciente (ORDER BY DESC en el DAO)
                 const primeraFila = filas[0];
                 const talla = primeraFila.cells[0].textContent.trim();
                 const color = primeraFila.cells[1].textContent.trim();
                 const stock = primeraFila.cells[2].textContent.trim();
-                
+
                 // Rellenar el formulario de agregar combinación
                 document.querySelector('form[action*="accion=guardar"] input[name="talla"]').value = talla;
                 document.querySelector('form[action*="accion=guardar"] input[name="color"]').value = color;
                 document.querySelector('form[action*="accion=guardar"] input[name="stock"]').value = stock;
-                
+
                 // Scroll hacia el formulario
-                document.querySelector('.box-success').scrollIntoView({ behavior: 'smooth', block: 'center' });
-                
+                document.querySelector('.box-success').scrollIntoView({behavior: 'smooth', block: 'center'});
+
             }
         </script>
     </body>

@@ -2,12 +2,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ include file="/vistas/includes/head-resources.jsp" %>
 
+<c:set var="pageActive" value="productos" />
 <!DOCTYPE html>
 <html lang="es">
     <head>
         <title>Gestión de categorías</title>
     </head>
-    <body>
+    <body class="hold-transition skin-blue sidebar-mini">
         <%@ include file="/vistas/includes/header-vendedor.jsp" %>
         <%@ include file="/vistas/includes/sidebar-vendedor.jsp" %>
 
@@ -15,6 +16,11 @@
             <section class="content-header">
                 <h1>Categorías</h1>
                 <small>Administración de categorías disponibles</small>
+                <ol class="breadcrumb">
+                    <li><a href="srvDashboardVendedor?accion=listar"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+                    <li><a href="srvProductos?accion=listar"> Productos</a></li>
+                    <li class="active"> Categorias</li>
+                </ol>
             </section>
 
             <section class="content">

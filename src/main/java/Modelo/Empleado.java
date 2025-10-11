@@ -1,13 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Modelo;
 
-/**
- *
- * @author user
- */
 public class Empleado {
     private int id;
     private String nombres;
@@ -18,7 +10,7 @@ public class Empleado {
     private String tipodoc;
     private String nrodoc;
     private int idusuario;
-
+    
     public int getId() {
         return id;
     }
