@@ -9,23 +9,20 @@ public class CategoriaDAO {
 
     public List<Categoria> listar() throws Exception {
         List<Categoria> lista = new ArrayList<>();
-        String sql = "SELECT id_categoria, nombre_categoria, descripcion FROM Categoria ORDER BY nombre_categoria ASC";
+        // ✅ Asegúrate de que el nombre de la columna sea correcto
+        String sql = "SELECT id_categoria, nombre_categoria, descripcion FROM Categoria";
 
-        Connection cn = conexion.getConnection();
-        PreparedStatement ps = cn.prepareStatement(sql);
-        ResultSet rs = ps.executeQuery();
+        try (Connection cn = conexion.getConnection(); PreparedStatement ps = cn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
-        while (rs.next()) {
-            Categoria c = new Categoria();
-            c.setIdCategoria(rs.getInt("id_categoria"));
-            c.setNombreCategoria(rs.getString("nombre_categoria"));
-            c.setDescripcion(rs.getString("descripcion")); // ✅ agregado
-            lista.add(c);
+            while (rs.next()) {
+                Categoria cat = new Categoria();
+                // ✅ IMPORTANTE: El nombre debe coincidir EXACTAMENTE con tu BD
+                cat.setIdCategoria(rs.getInt("id_categoria"));
+                cat.setNombreCategoria(rs.getString("nombre_categoria"));
+                cat.setDescripcion(rs.getString("descripcion"));
+                lista.add(cat);
+            }
         }
-
-        rs.close();
-        ps.close();
-        cn.close();
         return lista;
     }
 

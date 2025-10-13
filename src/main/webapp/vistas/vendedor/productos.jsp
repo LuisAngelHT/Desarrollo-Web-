@@ -39,10 +39,11 @@
             .table-responsive {
                 overflow-x: hidden !important;
                 overflow-y: visible;
-
-            </style>
-        </head>
-        <body class="hold-transition skin-blue sidebar-mini">
+            }
+        </style>
+    </head>
+    <body class="hold-transition skin-blue sidebar-mini">
+        <div class="wrapper">
             <%@ include file="/vistas/includes/header-vendedor.jsp" %>
             <%@ include file="/vistas/includes/sidebar-vendedor.jsp" %>
 
@@ -412,87 +413,85 @@
                         </div>
                     </div>
                 </section>
-            </div>
-
-            <!-- Modal Agregar -->
-            <div class="modal fade" id="modalAgregar" tabindex="-1">
-                <div class="modal-dialog">
-                    <form action="srvProductos?accion=guardar" method="post" enctype="multipart/form-data">
-                        <div class="modal-content">
-                            <div class="modal-header bg-success text-white">
-                                <button type="button" class="close text-white" data-dismiss="modal">
-                                    <span>&times;</span>
-                                </button>
-                                <h4 class="modal-title">
-                                    <i class="fa fa-plus-circle"></i> Agregar producto
-                                </h4>
+                <!-- Modal Agregar -->
+                <div class="modal fade" id="modalAgregar" tabindex="-1">
+                    <div class="modal-dialog">
+                        <form action="srvProductos?accion=guardar" method="post" enctype="multipart/form-data">
+                            <div class="modal-content">
+                                <div class="modal-header bg-success text-white">
+                                    <button type="button" class="close text-white" data-dismiss="modal">
+                                        <span>&times;</span>
+                                    </button>
+                                    <h4 class="modal-title">
+                                        <i class="fa fa-plus-circle"></i> Agregar producto
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label>Nombre</label>
+                                        <input type="text" name="nombre" class="form-control" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Categoría</label>
+                                        <select name="idCategoria" class="form-control" required>
+                                            <c:forEach var="cat" items="${listaCategorias}">
+                                                <option value="${cat.idCategoria}">${cat.nombreCategoria}</option>
+                                            </c:forEach>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Precio</label>
+                                        <input type="number" name="precio" class="form-control" step="0.01" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Imagen del producto</label>
+                                        <input type="file" name="imagen" class="form-control" accept="image/*" onchange="mostrarVistaPrevia(this)">
+                                        <img id="preview" class="img-thumbnail" style="max-width: 100px;
+                                             margin-top: 10px;
+                                             display: none;" />
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="fa fa-save"></i> Guardar
+                                    </button>
+                                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">
+                                        <i class="fa fa-times"></i> Cancelar
+                                    </button>
+                                </div>
                             </div>
-                            <div class="modal-body">
-                                <div class="form-group">
-                                    <label>Nombre</label>
-                                    <input type="text" name="nombre" class="form-control" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>Categoría</label>
-                                    <select name="idCategoria" class="form-control" required>
-                                        <c:forEach var="cat" items="${listaCategorias}">
-                                            <option value="${cat.idCategoria}">${cat.nombreCategoria}</option>
-                                        </c:forEach>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>Precio</label>
-                                    <input type="number" name="precio" class="form-control" step="0.01" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>Imagen del producto</label>
-                                    <input type="file" name="imagen" class="form-control" accept="image/*" onchange="mostrarVistaPrevia(this)">
-                                    <img id="preview" class="img-thumbnail" style="max-width: 100px;
-                                         margin-top: 10px;
-                                         display: none;" />
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="submit" class="btn btn-success">
-                                    <i class="fa fa-save"></i> Guardar
-                                </button>
-                                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">
-                                    <i class="fa fa-times"></i> Cancelar
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
-
             <%@ include file="/vistas/includes/footer.jsp" %>
+        </div>
+        <!-- ✅ Scripts al final -->
+        <script>
+            $(document).ready(function () {
+                // Inicializar tooltips
+                $('[data-toggle="tooltip"]').tooltip();
 
-            <!-- ✅ Scripts al final -->
-            <script>
-                $(document).ready(function () {
-                    // Inicializar tooltips
-                    $('[data-toggle="tooltip"]').tooltip();
+                // Auto-ocultar alertas después de 3.5 segundos
+                setTimeout(function () {
+                    $(".alert").fadeOut("slow");
+                }, 3500);
+            });
 
-                    // Auto-ocultar alertas después de 3.5 segundos
-                    setTimeout(function () {
-                        $(".alert").fadeOut("slow");
-                    }, 3500);
-                });
-
-                // Vista previa de imagen
-                function mostrarVistaPrevia(input) {
-                    if (input.files && input.files[0]) {
-                        var reader = new FileReader();
-                        reader.onload = function (e) {
-                            var preview = document.getElementById('preview');
-                            if (preview) {
-                                preview.src = e.target.result;
-                                preview.style.display = 'block';
-                            }
-                        };
-                        reader.readAsDataURL(input.files[0]);
-                    }
+            // Vista previa de imagen
+            function mostrarVistaPrevia(input) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        var preview = document.getElementById('preview');
+                        if (preview) {
+                            preview.src = e.target.result;
+                            preview.style.display = 'block';
+                        }
+                    };
+                    reader.readAsDataURL(input.files[0]);
                 }
-            </script>
-        </body>
-    </html>
+            }
+        </script>
+    </body>
+</html>
