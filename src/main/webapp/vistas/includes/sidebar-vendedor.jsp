@@ -18,7 +18,7 @@
             </li>
 
             <li class="${pageActive == 'ventas' ? 'active' : ''}">
-                <a href="#">
+                <a href="${pageContext.request.contextPath}/srvVentas?accion=listar">
                     <i class="fa fa-shopping-cart"></i> <span>Ventas</span>
                 </a>
             </li>

@@ -1,15 +1,9 @@
 package Modelo;
 
 import Config.conexion;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class VentaDAO {
 
@@ -19,9 +13,264 @@ public class VentaDAO {
         this.connection = conexion.getConnection();
     }
 
+    // ========================================
+    // MÉTODOS PARA LISTADO Y BÚSQUEDA
+    // ========================================
     /**
-     * Registra una venta completa (venta + detalles)
+     * Lista ventas con paginación
      */
+    public List<Venta> listarVentas(int pagina, int registrosPorPagina) {
+        List<Venta> lista = new ArrayList<>();
+        int offset = (pagina - 1) * registrosPorPagina;
+
+        String sql = "SELECT v.id_venta, v.fecha_venta, v.total_final, v.estado, "
+                + "v.id_cliente, v.id_vendedor, "
+                + "CONCAT(u.nombre, ' ', u.apellido) as nombre_cliente "
+                + "FROM Venta v "
+                + "INNER JOIN Usuario u ON v.id_cliente = u.id_usuario "
+                + "ORDER BY v.fecha_venta DESC "
+                + "LIMIT ? OFFSET ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, registrosPorPagina);
+            ps.setInt(2, offset);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Venta v = new Venta();
+                v.setIdVenta(rs.getInt("id_venta"));
+                v.setFechaVenta(rs.getTimestamp("fecha_venta"));
+                v.setTotalFinal(rs.getDouble("total_final"));
+                v.setEstado(rs.getBoolean("estado"));
+                v.setIdCliente(rs.getInt("id_cliente"));
+                v.setIdVendedor(rs.getObject("id_vendedor") != null ? rs.getInt("id_vendedor") : null);
+                v.setNombreCliente(rs.getString("nombre_cliente"));
+
+                lista.add(v);
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ ERROR en listarVentas:");
+            e.printStackTrace();
+        }
+
+        return lista;
+    }
+
+    /**
+     * Busca ventas por cliente o número de orden
+     */
+    public List<Venta> buscarVentas(String criterio, int pagina, int registrosPorPagina) {
+        List<Venta> lista = new ArrayList<>();
+        int offset = (pagina - 1) * registrosPorPagina;
+
+        String sql = "SELECT v.id_venta, v.fecha_venta, v.total_final, v.estado, "
+                + "v.id_cliente, v.id_vendedor, "
+                + "CONCAT(u.nombre, ' ', u.apellido) as nombre_cliente "
+                + "FROM Venta v "
+                + "INNER JOIN Usuario u ON v.id_cliente = u.id_usuario "
+                + "WHERE CONCAT(u.nombre, ' ', u.apellido) LIKE ? "
+                + "OR v.id_venta LIKE ? "
+                + "ORDER BY v.fecha_venta DESC "
+                + "LIMIT ? OFFSET ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            String pattern = "%" + criterio + "%";
+            ps.setString(1, pattern);
+            ps.setString(2, pattern);
+            ps.setInt(3, registrosPorPagina);
+            ps.setInt(4, offset);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Venta v = new Venta();
+                v.setIdVenta(rs.getInt("id_venta"));
+                v.setFechaVenta(rs.getTimestamp("fecha_venta"));
+                v.setTotalFinal(rs.getDouble("total_final"));
+                v.setEstado(rs.getBoolean("estado"));
+                v.setIdCliente(rs.getInt("id_cliente"));
+                v.setIdVendedor(rs.getObject("id_vendedor") != null ? rs.getInt("id_vendedor") : null);
+                v.setNombreCliente(rs.getString("nombre_cliente"));
+
+                lista.add(v);
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ ERROR en buscarVentas:");
+            e.printStackTrace();
+        }
+
+        return lista;
+    }
+
+    /**
+     * Filtra ventas por estado
+     */
+    public List<Venta> filtrarPorEstado(boolean estado, int pagina, int registrosPorPagina) {
+        List<Venta> lista = new ArrayList<>();
+        int offset = (pagina - 1) * registrosPorPagina;
+
+        String sql = "SELECT v.id_venta, v.fecha_venta, v.total_final, v.estado, "
+                + "v.id_cliente, v.id_vendedor, "
+                + "CONCAT(u.nombre, ' ', u.apellido) as nombre_cliente "
+                + "FROM Venta v "
+                + "INNER JOIN Usuario u ON v.id_cliente = u.id_usuario "
+                + "WHERE v.estado = ? "
+                + "ORDER BY v.fecha_venta DESC "
+                + "LIMIT ? OFFSET ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setBoolean(1, estado);
+            ps.setInt(2, registrosPorPagina);
+            ps.setInt(3, offset);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Venta v = new Venta();
+                v.setIdVenta(rs.getInt("id_venta"));
+                v.setFechaVenta(rs.getTimestamp("fecha_venta"));
+                v.setTotalFinal(rs.getDouble("total_final"));
+                v.setEstado(rs.getBoolean("estado"));
+                v.setIdCliente(rs.getInt("id_cliente"));
+                v.setIdVendedor(rs.getObject("id_vendedor") != null ? rs.getInt("id_vendedor") : null);
+                v.setNombreCliente(rs.getString("nombre_cliente"));
+
+                lista.add(v);
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ ERROR en filtrarPorEstado:");
+            e.printStackTrace();
+        }
+
+        return lista;
+    }
+
+    /**
+     * Filtra ventas por rango de fechas
+     */
+    public List<Venta> filtrarPorFechas(String fechaInicio, String fechaFin, int pagina, int registrosPorPagina) {
+        List<Venta> lista = new ArrayList<>();
+        int offset = (pagina - 1) * registrosPorPagina;
+
+        String sql = "SELECT v.id_venta, v.fecha_venta, v.total_final, v.estado, "
+                + "v.id_cliente, v.id_vendedor, "
+                + "CONCAT(u.nombre, ' ', u.apellido) as nombre_cliente "
+                + "FROM Venta v "
+                + "INNER JOIN Usuario u ON v.id_cliente = u.id_usuario "
+                + "WHERE DATE(v.fecha_venta) BETWEEN ? AND ? "
+                + "ORDER BY v.fecha_venta DESC "
+                + "LIMIT ? OFFSET ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, fechaInicio);
+            ps.setString(2, fechaFin);
+            ps.setInt(3, registrosPorPagina);
+            ps.setInt(4, offset);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Venta v = new Venta();
+                v.setIdVenta(rs.getInt("id_venta"));
+                v.setFechaVenta(rs.getTimestamp("fecha_venta"));
+                v.setTotalFinal(rs.getDouble("total_final"));
+                v.setEstado(rs.getBoolean("estado"));
+                v.setIdCliente(rs.getInt("id_cliente"));
+                v.setIdVendedor(rs.getObject("id_vendedor") != null ? rs.getInt("id_vendedor") : null);
+                v.setNombreCliente(rs.getString("nombre_cliente"));
+
+                lista.add(v);
+            }
+        } catch (SQLException e) {
+            System.err.println("❌ ERROR en filtrarPorFechas:");
+            e.printStackTrace();
+        }
+
+        return lista;
+    }
+
+    /**
+     * Cuenta total de ventas
+     */
+    public int contarVentas() {
+        String sql = "SELECT COUNT(*) FROM Venta";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+    /**
+     * Cuenta ventas por búsqueda
+     */
+    public int contarVentasBusqueda(String criterio) {
+        String sql = "SELECT COUNT(*) FROM Venta v "
+                + "INNER JOIN Usuario u ON v.id_cliente = u.id_usuario "
+                + "WHERE CONCAT(u.nombre, ' ', u.apellido) LIKE ? "
+                + "OR v.id_venta LIKE ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            String pattern = "%" + criterio + "%";
+            ps.setString(1, pattern);
+            ps.setString(2, pattern);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+    /**
+     * Cuenta ventas por estado
+     */
+    public int contarVentasPorEstado(boolean estado) {
+        String sql = "SELECT COUNT(*) FROM Venta WHERE estado = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setBoolean(1, estado);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+    /**
+     * Obtiene estadísticas de ventas (para badges)
+     */
+    public double calcularTotalVentas() {
+        String sql = "SELECT COALESCE(SUM(total_final), 0) as total FROM Venta WHERE estado = true";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getDouble("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 0.0;
+    }
+
+    // ========================================
+    // MÉTODOS EXISTENTES
+    // ========================================
+    // Registra una venta completa (venta + detalles)
     public int registrarVenta(int idCliente, List<Carrito> items, double total) {
         String sqlVenta = "INSERT INTO Venta (id_cliente, total_final, estado, fecha_venta) VALUES (?, ?, ?, NOW())";
         String sqlDetalle = "INSERT INTO Detalle_Venta (id_venta, id_inventario, cantidad, precio_unitario_venta) "

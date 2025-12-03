@@ -156,52 +156,52 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <c:forEach var="v" items="${listaVentas}">
-                                                    <tr>
-                                                        <td class="text-center">
-                                                            <strong>B<fmt:formatNumber value="${v.idVenta}" pattern="000000"/></strong>
-                                                        </td>
-                                                        <td>
-                                                            <i class="fa fa-user"></i> ${v.nombreCliente}
-                                                        </td>
-                                                        <td>
-                                                            <i class="fa fa-calendar"></i> 
-                                                            <fmt:formatDate value="${v.fechaVenta}" pattern="dd/MM/yyyy HH:mm"/>
-                                                        </td>
-                                                        <td class="text-right">
-                                                            <strong style="color: #00a65a;">
-                                                                S/. <fmt:formatNumber value="${v.totalFinal}" pattern="#,##0.00"/>
-                                                            </strong>
-                                                        </td>
-                                                        <td class="text-center">
-                                                            <c:choose>
-                                                                <c:when test="${v.estado}">
-                                                                    <span class="label label-success">
-                                                                        <i class="fa fa-check"></i> Activa
-                                                                    </span>
-                                                                </c:when>
-                                                                <c:otherwise>
-                                                                    <span class="label label-danger">
-                                                                        <i class="fa fa-times"></i> Cancelada
-                                                                    </span>
-                                                                </c:otherwise>
-                                                            </c:choose>
-                                                        </td>
-                                                        <td class="text-center">
-                                                            <a href="srvVentas?accion=ver&id=${v.idVenta}" 
-                                                               class="btn btn-xs btn-info" 
-                                                               title="Ver detalle">
-                                                                <i class="fa fa-eye"></i>
-                                                            </a>
-                                                            <a href="srvVentas?accion=descargarBoleta&id=${v.idVenta}" 
-                                                               class="btn btn-xs btn-primary" 
-                                                               title="Descargar boleta"
-                                                               target="_blank">
-                                                                <i class="fa fa-file-pdf-o"></i>
-                                                            </a>
-                                                        </td>
-                                                    </tr>
-                                                </c:forEach>
+                                            <c:forEach var="v" items="${listaVentas}">
+                                                <tr>
+                                                    <td class="text-center">
+                                                        <strong>B<fmt:formatNumber value="${v.idVenta}" pattern="000000"/></strong>
+                                                    </td>
+                                                    <td>
+                                                        <i class="fa fa-user"></i> ${v.nombreCliente}
+                                                    </td>
+                                                    <td>
+                                                        <i class="fa fa-calendar"></i> 
+                                                <fmt:formatDate value="${v.fechaVenta}" pattern="dd/MM/yyyy HH:mm"/>
+                                                </td>
+                                                <td class="text-right">
+                                                    <strong style="color: #00a65a;">
+                                                        S/. <fmt:formatNumber value="${v.totalFinal}" pattern="#,##0.00"/>
+                                                    </strong>
+                                                </td>
+                                                <td class="text-center">
+                                                <c:choose>
+                                                    <c:when test="${v.estado}">
+                                                        <span class="label label-success">
+                                                            <i class="fa fa-check"></i> Activa
+                                                        </span>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <span class="label label-danger">
+                                                            <i class="fa fa-times"></i> Cancelada
+                                                        </span>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                                </td>
+                                                <td class="text-center">
+                                                    <a href="srvVentas?accion=ver&id=${v.idVenta}" 
+                                                       class="btn btn-xs btn-info" 
+                                                       title="Ver detalle">
+                                                        <i class="fa fa-eye"></i>
+                                                    </a>
+                                                    <a href="srvVentas?accion=descargarBoleta&id=${v.idVenta}" 
+                                                       class="btn btn-xs btn-primary" 
+                                                       title="Descargar boleta"
+                                                       target="_blank">
+                                                        <i class="fa fa-file-pdf-o"></i>
+                                                    </a>
+                                                </td>
+                                                </tr>
+                                            </c:forEach>
                                             </tbody>
                                         </table>
                                     </div>
@@ -228,44 +228,44 @@
 
                                             <!-- Primera página -->
                                             <li class="${paginaActual == 1 ? 'disabled' : ''}">
-                                                <c:choose>
-                                                    <c:when test="${not empty terminoBusqueda}">
-                                                        <a href="srvVentas?accion=buscar&termino=${terminoBusqueda}&pagina=1">
-                                                            <i class="fa fa-angle-double-left"></i>
-                                                        </a>
-                                                    </c:when>
-                                                    <c:when test="${not empty estadoFiltro}">
-                                                        <a href="srvVentas?accion=filtrar&estado=${estadoFiltro}&pagina=1">
-                                                            <i class="fa fa-angle-double-left"></i>
-                                                        </a>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <a href="srvVentas?accion=listar&pagina=1">
-                                                            <i class="fa fa-angle-double-left"></i>
-                                                        </a>
-                                                    </c:otherwise>
-                                                </c:choose>
+                                            <c:choose>
+                                                <c:when test="${not empty terminoBusqueda}">
+                                                    <a href="srvVentas?accion=buscar&termino=${terminoBusqueda}&pagina=1">
+                                                        <i class="fa fa-angle-double-left"></i>
+                                                    </a>
+                                                </c:when>
+                                                <c:when test="${not empty estadoFiltro}">
+                                                    <a href="srvVentas?accion=filtrar&estado=${estadoFiltro}&pagina=1">
+                                                        <i class="fa fa-angle-double-left"></i>
+                                                    </a>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <a href="srvVentas?accion=listar&pagina=1">
+                                                        <i class="fa fa-angle-double-left"></i>
+                                                    </a>
+                                                </c:otherwise>
+                                            </c:choose>
                                             </li>
 
                                             <!-- Anterior -->
                                             <li class="${paginaActual == 1 ? 'disabled' : ''}">
-                                                <c:choose>
-                                                    <c:when test="${not empty terminoBusqueda}">
-                                                        <a href="srvVentas?accion=buscar&termino=${terminoBusqueda}&pagina=${paginaActual - 1}">
-                                                            <i class="fa fa-angle-left"></i>
-                                                        </a>
-                                                    </c:when>
-                                                    <c:when test="${not empty estadoFiltro}">
-                                                        <a href="srvVentas?accion=filtrar&estado=${estadoFiltro}&pagina=${paginaActual - 1}">
-                                                            <i class="fa fa-angle-left"></i>
-                                                        </a>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <a href="srvVentas?accion=listar&pagina=${paginaActual - 1}">
-                                                            <i class="fa fa-angle-left"></i>
-                                                        </a>
-                                                    </c:otherwise>
-                                                </c:choose>
+                                            <c:choose>
+                                                <c:when test="${not empty terminoBusqueda}">
+                                                    <a href="srvVentas?accion=buscar&termino=${terminoBusqueda}&pagina=${paginaActual - 1}">
+                                                        <i class="fa fa-angle-left"></i>
+                                                    </a>
+                                                </c:when>
+                                                <c:when test="${not empty estadoFiltro}">
+                                                    <a href="srvVentas?accion=filtrar&estado=${estadoFiltro}&pagina=${paginaActual - 1}">
+                                                        <i class="fa fa-angle-left"></i>
+                                                    </a>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <a href="srvVentas?accion=listar&pagina=${paginaActual - 1}">
+                                                        <i class="fa fa-angle-left"></i>
+                                                    </a>
+                                                </c:otherwise>
+                                            </c:choose>
                                             </li>
 
                                             <!-- Números de página -->
@@ -273,20 +273,20 @@
                                                 <c:choose>
                                                     <c:when test="${i == paginaActual}">
                                                         <li class="active"><a href="#">${i}</a></li>
-                                                        </c:when>
-                                                        <c:when test="${i >= paginaActual - 2 && i <= paginaActual + 2}">
+                                                    </c:when>
+                                                    <c:when test="${i >= paginaActual - 2 && i <= paginaActual + 2}">
                                                         <li>
-                                                            <c:choose>
-                                                                <c:when test="${not empty terminoBusqueda}">
-                                                                    <a href="srvVentas?accion=buscar&termino=${terminoBusqueda}&pagina=${i}">${i}</a>
-                                                                </c:when>
-                                                                <c:when test="${not empty estadoFiltro}">
-                                                                    <a href="srvVentas?accion=filtrar&estado=${estadoFiltro}&pagina=${i}">${i}</a>
-                                                                </c:when>
-                                                                <c:otherwise>
-                                                                    <a href="srvVentas?accion=listar&pagina=${i}">${i}</a>
-                                                                </c:otherwise>
-                                                            </c:choose>
+                                                        <c:choose>
+                                                            <c:when test="${not empty terminoBusqueda}">
+                                                                <a href="srvVentas?accion=buscar&termino=${terminoBusqueda}&pagina=${i}">${i}</a>
+                                                            </c:when>
+                                                            <c:when test="${not empty estadoFiltro}">
+                                                                <a href="srvVentas?accion=filtrar&estado=${estadoFiltro}&pagina=${i}">${i}</a>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <a href="srvVentas?accion=listar&pagina=${i}">${i}</a>
+                                                            </c:otherwise>
+                                                        </c:choose>
                                                         </li>
                                                     </c:when>
                                                 </c:choose>
@@ -294,44 +294,44 @@
 
                                             <!-- Siguiente -->
                                             <li class="${paginaActual == totalPaginas ? 'disabled' : ''}">
-                                                <c:choose>
-                                                    <c:when test="${not empty terminoBusqueda}">
-                                                        <a href="srvVentas?accion=buscar&termino=${terminoBusqueda}&pagina=${paginaActual + 1}">
-                                                            <i class="fa fa-angle-right"></i>
-                                                        </a>
-                                                    </c:when>
-                                                    <c:when test="${not empty estadoFiltro}">
-                                                        <a href="srvVentas?accion=filtrar&estado=${estadoFiltro}&pagina=${paginaActual + 1}">
-                                                            <i class="fa fa-angle-right"></i>
-                                                        </a>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <a href="srvVentas?accion=listar&pagina=${paginaActual + 1}">
-                                                            <i class="fa fa-angle-right"></i>
-                                                        </a>
-                                                    </c:otherwise>
-                                                </c:choose>
+                                            <c:choose>
+                                                <c:when test="${not empty terminoBusqueda}">
+                                                    <a href="srvVentas?accion=buscar&termino=${terminoBusqueda}&pagina=${paginaActual + 1}">
+                                                        <i class="fa fa-angle-right"></i>
+                                                    </a>
+                                                </c:when>
+                                                <c:when test="${not empty estadoFiltro}">
+                                                    <a href="srvVentas?accion=filtrar&estado=${estadoFiltro}&pagina=${paginaActual + 1}">
+                                                        <i class="fa fa-angle-right"></i>
+                                                    </a>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <a href="srvVentas?accion=listar&pagina=${paginaActual + 1}">
+                                                        <i class="fa fa-angle-right"></i>
+                                                    </a>
+                                                </c:otherwise>
+                                            </c:choose>
                                             </li>
 
                                             <!-- Última página -->
                                             <li class="${paginaActual == totalPaginas ? 'disabled' : ''}">
-                                                <c:choose>
-                                                    <c:when test="${not empty terminoBusqueda}">
-                                                        <a href="srvVentas?accion=buscar&termino=${terminoBusqueda}&pagina=${totalPaginas}">
-                                                            <i class="fa fa-angle-double-right"></i>
-                                                        </a>
-                                                    </c:when>
-                                                    <c:when test="${not empty estadoFiltro}">
-                                                        <a href="srvVentas?accion=filtrar&estado=${estadoFiltro}&pagina=${totalPaginas}">
-                                                            <i class="fa fa-angle-double-right"></i>
-                                                        </a>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <a href="srvVentas?accion=listar&pagina=${totalPaginas}">
-                                                            <i class="fa fa-angle-double-right"></i>
-                                                        </a>
-                                                    </c:otherwise>
-                                                </c:choose>
+                                            <c:choose>
+                                                <c:when test="${not empty terminoBusqueda}">
+                                                    <a href="srvVentas?accion=buscar&termino=${terminoBusqueda}&pagina=${totalPaginas}">
+                                                        <i class="fa fa-angle-double-right"></i>
+                                                    </a>
+                                                </c:when>
+                                                <c:when test="${not empty estadoFiltro}">
+                                                    <a href="srvVentas?accion=filtrar&estado=${estadoFiltro}&pagina=${totalPaginas}">
+                                                        <i class="fa fa-angle-double-right"></i>
+                                                    </a>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <a href="srvVentas?accion=listar&pagina=${totalPaginas}">
+                                                        <i class="fa fa-angle-double-right"></i>
+                                                    </a>
+                                                </c:otherwise>
+                                            </c:choose>
                                             </li>
                                         </ul>
                                     </div>

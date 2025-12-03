@@ -35,6 +35,16 @@ public class srvVentas extends HttpServlet {
         try {
             if ("generarBoleta".equals(accion)) {
                 generarBoleta(request, response);
+            } else if ("listar".equals(accion)) {
+                listarVentas(request, response);
+            } else if ("buscar".equals(accion)) {
+                buscarVentas(request, response);
+            } else if ("filtrar".equals(accion)) {
+                filtrarPorEstado(request, response);
+            } else if ("ver".equals(accion)) {
+                verDetalle(request, response);
+            } else if ("descargarBoleta".equals(accion)) {
+                descargarBoleta(request, response);
             } else {
                 response.sendRedirect(request.getContextPath() + "/srvCatalogo");
             }
@@ -241,6 +251,203 @@ public class srvVentas extends HttpServlet {
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setPadding(5);
         tabla.addCell(cell);
+    }
+
+    // ========================================
+// MÉTODOS PARA GESTIÓN DE VENTAS (VENDEDOR)
+// ========================================
+    /**
+     * Lista todas las ventas con paginación
+     */
+    private void listarVentas(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        System.out.println("=== LISTANDO VENTAS ===");
+
+        // Paginación
+        int pagina = 1;
+        String paramPagina = request.getParameter("pagina");
+        if (paramPagina != null && !paramPagina.isEmpty()) {
+            try {
+                pagina = Integer.parseInt(paramPagina);
+            } catch (NumberFormatException e) {
+                pagina = 1;
+            }
+        }
+
+        int registrosPorPagina = 10;
+
+        // Obtener lista de ventas
+        List<Venta> listaVentas = ventaDAO.listarVentas(pagina, registrosPorPagina);
+        int totalVentas = ventaDAO.contarVentas();
+        int totalPaginas = (int) Math.ceil((double) totalVentas / registrosPorPagina);
+
+        // Calcular estadísticas
+        double montoTotal = ventaDAO.calcularTotalVentas();
+
+        System.out.println("Ventas encontradas: " + listaVentas.size());
+        System.out.println("Total ventas: " + totalVentas);
+        System.out.println("Monto total: " + montoTotal);
+
+        // Enviar datos al JSP
+        request.setAttribute("listaVentas", listaVentas);
+        request.setAttribute("totalVentas", totalVentas);
+        request.setAttribute("montoTotal", montoTotal);
+        request.setAttribute("paginaActual", pagina);
+        request.setAttribute("totalPaginas", totalPaginas);
+
+        request.getRequestDispatcher("/vistas/vendedor/listar-ventas.jsp").forward(request, response);
+    }
+
+    /**
+     * Busca ventas por cliente o número de orden
+     */
+    private void buscarVentas(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String termino = request.getParameter("termino");
+        System.out.println("=== BUSCANDO VENTAS: " + termino + " ===");
+
+        if (termino == null || termino.trim().isEmpty()) {
+            listarVentas(request, response);
+            return;
+        }
+
+        // Paginación
+        int pagina = 1;
+        String paramPagina = request.getParameter("pagina");
+        if (paramPagina != null && !paramPagina.isEmpty()) {
+            try {
+                pagina = Integer.parseInt(paramPagina);
+            } catch (NumberFormatException e) {
+                pagina = 1;
+            }
+        }
+
+        int registrosPorPagina = 10;
+
+        // Buscar ventas
+        List<Venta> listaVentas = ventaDAO.buscarVentas(termino, pagina, registrosPorPagina);
+        int totalVentas = ventaDAO.contarVentasBusqueda(termino);
+        int totalPaginas = (int) Math.ceil((double) totalVentas / registrosPorPagina);
+
+        System.out.println("Resultados encontrados: " + listaVentas.size());
+
+        // Enviar datos al JSP
+        request.setAttribute("listaVentas", listaVentas);
+        request.setAttribute("totalVentas", totalVentas);
+        request.setAttribute("terminoBusqueda", termino);
+        request.setAttribute("paginaActual", pagina);
+        request.setAttribute("totalPaginas", totalPaginas);
+
+        request.getRequestDispatcher("/vistas/vendedor/listar-ventas.jsp").forward(request, response);
+    }
+
+    /**
+     * Filtra ventas por estado
+     */
+    private void filtrarPorEstado(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String paramEstado = request.getParameter("estado");
+        boolean estado = "true".equals(paramEstado) || "1".equals(paramEstado);
+
+        System.out.println("=== FILTRANDO VENTAS POR ESTADO: " + (estado ? "Activas" : "Canceladas") + " ===");
+
+        // Paginación
+        int pagina = 1;
+        String paramPagina = request.getParameter("pagina");
+        if (paramPagina != null && !paramPagina.isEmpty()) {
+            try {
+                pagina = Integer.parseInt(paramPagina);
+            } catch (NumberFormatException e) {
+                pagina = 1;
+            }
+        }
+
+        int registrosPorPagina = 10;
+
+        // Filtrar ventas
+        List<Venta> listaVentas = ventaDAO.filtrarPorEstado(estado, pagina, registrosPorPagina);
+        int totalVentas = ventaDAO.contarVentasPorEstado(estado);
+        int totalPaginas = (int) Math.ceil((double) totalVentas / registrosPorPagina);
+
+        System.out.println("Ventas filtradas: " + listaVentas.size());
+
+        // Enviar datos al JSP
+        request.setAttribute("listaVentas", listaVentas);
+        request.setAttribute("totalVentas", totalVentas);
+        request.setAttribute("estadoFiltro", estado);
+        request.setAttribute("paginaActual", pagina);
+        request.setAttribute("totalPaginas", totalPaginas);
+
+        request.getRequestDispatcher("/vistas/vendedor/listar-ventas.jsp").forward(request, response);
+    }
+
+    /**
+     * Ver detalle de una venta específica
+     */
+    private void verDetalle(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String paramId = request.getParameter("id");
+        System.out.println("=== VER DETALLE DE VENTA: " + paramId + " ===");
+
+        if (paramId == null || paramId.trim().isEmpty()) {
+            HttpSession session = request.getSession();
+            session.setAttribute("tipoMensaje", "error");
+            session.setAttribute("mensaje", "ID de venta no válido");
+            response.sendRedirect(request.getContextPath() + "/srvVentas?accion=listar");
+            return;
+        }
+
+        try {
+            int idVenta = Integer.parseInt(paramId);
+            Venta venta = ventaDAO.obtenerVentaCompleta(idVenta);
+
+            if (venta != null) {
+                request.setAttribute("venta", venta);
+                request.getRequestDispatcher("/vistas/vendedor/detalle-venta.jsp").forward(request, response);
+            } else {
+                HttpSession session = request.getSession();
+                session.setAttribute("tipoMensaje", "warning");
+                session.setAttribute("mensaje", "No se encontró la venta solicitada");
+                response.sendRedirect(request.getContextPath() + "/srvVentas?accion=listar");
+            }
+
+        } catch (NumberFormatException e) {
+            HttpSession session = request.getSession();
+            session.setAttribute("tipoMensaje", "error");
+            session.setAttribute("mensaje", "ID de venta no válido");
+            response.sendRedirect(request.getContextPath() + "/srvVentas?accion=listar");
+        }
+    }
+
+    /**
+     * Regenera PDF de una venta existente
+     */
+    private void descargarBoleta(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+
+        String paramId = request.getParameter("id");
+        System.out.println("=== DESCARGANDO BOLETA: " + paramId + " ===");
+
+        if (paramId != null && !paramId.trim().isEmpty()) {
+            try {
+                int idVenta = Integer.parseInt(paramId);
+                generarPDF(idVenta, response);
+            } catch (NumberFormatException e) {
+                HttpSession session = request.getSession();
+                session.setAttribute("tipoMensaje", "error");
+                session.setAttribute("mensaje", "ID de venta no válido");
+                response.sendRedirect(request.getContextPath() + "/srvVentas?accion=listar");
+            }
+        } else {
+            HttpSession session = request.getSession();
+            session.setAttribute("tipoMensaje", "error");
+            session.setAttribute("mensaje", "ID de venta no especificado");
+            response.sendRedirect(request.getContextPath() + "/srvVentas?accion=listar");
+        }
     }
 
     @Override
